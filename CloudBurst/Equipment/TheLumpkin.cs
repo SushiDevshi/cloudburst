@@ -61,6 +61,7 @@ namespace CloudBurst.Equipment
             blastAttack.falloffModel = BlastAttack.FalloffModel.None;
             blastAttack.damageType = DamageType.Stun1s;
             blastAttack.Fire();
+            
         }
     }
 }

@@ -334,7 +334,8 @@
     <Compile Include="EntityStates\Engineer\Shotgun.cs" />
     <Compile Include="EntityStates\Engineer\MaintainAndDefend.cs" />
     <Compile Include="EntityStates\Engineer\MovementShield.cs" />
-    <Compile Include="Helpers.cs" />
+    <Compile Include="Scripts\Class1.cs" />
+    <Compile Include="Scripts\Helpers.cs" />
     <Compile Include="Cloudburst.cs" />
     <Compile Include="Equipment\BrokenPrinter.cs" />
     <Compile Include="Equipment\HereticBox.cs" />
