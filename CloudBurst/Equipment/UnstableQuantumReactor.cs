@@ -10,14 +10,40 @@ namespace CloudBurst.Equipment
 {
     public sealed class UnstableQuantumReactor
     {
+        static UnityEngine.Random UnityRnd = new UnityEngine.Random();
         public static EquipmentIndex EquipIndex { get; private set; }
 
-        public UnstableQuantumReactor()
+        public static List<GameObject> projectileList = new List<GameObject>{
+
+            Resources.Load<GameObject>("prefabs/projectiles/ArtifactShellSeekingSolarFlare"),
+            Resources.Load<GameObject>("prefabs/projectiles/BeetleQueenSpit"),
+            Resources.Load<GameObject>("prefabs/projectiles/CommandoGrenadeProjectile"),
+            Resources.Load<GameObject>("prefabs/projectiles/DroneRocket"),
+            Resources.Load<GameObject>("prefabs/projectiles/Sawmerang"),
+            Resources.Load<GameObject>("prefabs/projectiles/RoboBallProjectile"),
+            Resources.Load<GameObject>("prefabs/projectiles/SMMaulingRockLarge"),
+            Resources.Load<GameObject>("prefabs/projectiles/SMMaulingRockMedium"),
+            Resources.Load<GameObject>("prefabs/projectiles/SMMaulingRockSmall"),
+            Resources.Load<GameObject>("prefabs/projectiles/SporeGrenadeProjectile"),
+            Resources.Load<GameObject>("prefabs/projectiles/Sunder"),
+            Resources.Load<GameObject>("prefabs/projectiles/SyringeProjectile"),
+            Resources.Load<GameObject>("prefabs/projectiles/SuperRoboBallProjectile"),
+            Resources.Load<GameObject>("prefabs/projectiles/SyringeProjectile"),
+            Resources.Load<GameObject>("prefabs/projectiles/SyringeProjectileHealing"),
+            Resources.Load<GameObject>("prefabs/projectiles/BellBall"),
+            Resources.Load<GameObject>("prefabs/projectiles/CommandoGrenadeProjectile"),
+            Resources.Load<GameObject>("prefabs/projectiles/CrocoDiseaseProjectile"),
+            Resources.Load<GameObject>("prefabs/projectiles/CrocoSpit"),
+            Resources.Load<GameObject>("prefabs/projectiles/DaggerProjectile"),
+
+        };
+
+    public UnstableQuantumReactor()
         {
             {
                 R2API.AssetPlus.Languages.AddToken("UNSTABLEQUANTUMREACTOR_ITEM_TOKEN", "Unstable Quantum Reactor");
-                R2API.AssetPlus.Languages.AddToken("UNSTABLEQUANTUMREACTOR_ITEM_DESCRIPTION_TOKEN", "Fire random projectiles for a short duration on use.");
-                R2API.AssetPlus.Languages.AddToken("UNSTABLEQUANTUMREACTOR_ITEM_PICKUP_TOKEN", "Fire random projectiles for a short duration on use.");
+                R2API.AssetPlus.Languages.AddToken("UNSTABLEQUANTUMREACTOR_ITEM_DESCRIPTION_TOKEN", "Fire a random projectile.");
+                R2API.AssetPlus.Languages.AddToken("UNSTABLEQUANTUMREACTOR_ITEM_PICKUP_TOKEN", "Fire a random projectile on use.");
                 var equipDef = new EquipmentDef
                 {
                     cooldown = 110,
@@ -50,15 +76,19 @@ namespace CloudBurst.Equipment
         }
         public void BecomeUnstable(CharacterBody user)
         {
-            GameObject projPrefab = Resources.Load<GameObject>("prefabs/Projectiles/loaderzapcone");
+            InputBankTest aimRay = user.inputBank;
+
+            int ah = UnityEngine.Random.Range(0, projectileList.Count);
+
+
             var projInfo = new FireProjectileInfo
             {
                 crit = false,
                 damage = 1.5f,
                 owner = user.gameObject,
                 position = user.transform.position,
-                projectilePrefab = projPrefab,
-                rotation = Util.QuaternionSafeLookRotation(user.aimOrigin),
+                projectilePrefab = projectileList[ah],
+                rotation = Util.QuaternionSafeLookRotation(aimRay.aimDirection),
             };
             ProjectileManager.instance.FireProjectile(projInfo);
         }

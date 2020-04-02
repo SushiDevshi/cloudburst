@@ -4,22 +4,24 @@ using UnityEngine;
 
 namespace CloudBurst.Items
 {
-    public sealed class MechanicalTrinket
+    public sealed class Sundial
     {
+
         public static ItemIndex itemIndex { get; private set; }
-        public MechanicalTrinket()
+        public static ProcType procType { get; private set; }
+        public Sundial()
         {
             {
-                R2API.AssetPlus.Languages.AddToken("TRINKET_ITEM_TOKEN", "Mechanical Trinket");
-                R2API.AssetPlus.Languages.AddToken("TRINKET_ITEM_DESCRIPTION_TOKEN", "Increase teleporter radius by dividing the current .");
-                R2API.AssetPlus.Languages.AddToken("TRINKET_ITEM_PICKUP_TOKEN", "Increase teleporter radius.");
+                R2API.AssetPlus.Languages.AddToken("SUNDIAL_ITEM_TOKEN", "Sundial");
+                R2API.AssetPlus.Languages.AddToken("SUNDIAL_ITEM_DESCRIPTION_TOKEN", "Gain a buff while in direct sunlight");
+                R2API.AssetPlus.Languages.AddToken("SUNDIAL_ITEM_PICKUP_TOKEN", "The sun shines on those who embrace it.");
                 var itemDef = new ItemDef
                 {
                     pickupModelPath = "Prefabs/PickupModels/PickupSoda",
                     pickupIconPath = "Textures/ItemIcons/texbirdeyeicon",
-                    pickupToken = "TRINKET_ITEM_PICKUP_TOKEN",
-                    nameToken = "TRINKET_ITEM_TOKEN",
-                    descriptionToken = "TRINKET_ITEM_DESCRIPTION_TOKEN",
+                    pickupToken = "SUNDIAL_ITEM_PICKUP_TOKEN",
+                    nameToken = "SUNDIAL_ITEM_TOKEN",
+                    descriptionToken = "SUNDIAL_ITEM_DESCRIPTION_TOKEN",
                     tier = ItemTier.Tier2
                 };
 

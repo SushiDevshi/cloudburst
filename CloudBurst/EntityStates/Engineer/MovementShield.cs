@@ -8,7 +8,7 @@ using UnityEngine.Networking;
 
 namespace CloudBurst.Weapon
 {
-    public class Shield : BaseState
+    public class Shield : BaseSkillState
     {
         private GameObject shieldInstance;
         public GameObject projectilePrefab;

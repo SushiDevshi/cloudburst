@@ -7,7 +7,7 @@ using EntityStates.Engi.EngiWeapon;
 
 namespace CloudBurst.Weapon
 {
-    public class MANDA : BaseState
+    public class MANDA : BaseSkillState
     {
         public float force = 3f;
         public float duration;
@@ -17,7 +17,7 @@ namespace CloudBurst.Weapon
         public bool buttonReleased;
         private Ray projectileRay;
         private Transform modelTransform;
-        public override void OnEnter()
+        public override void OnEnter() 
         {
             base.OnEnter();
             this.modelTransform = base.GetModelTransform();
@@ -38,7 +38,7 @@ namespace CloudBurst.Weapon
             base.AddRecoil(-1f * FireGrenades.recoilAmplitude, -2f * FireGrenades.recoilAmplitude, -1f * FireGrenades.recoilAmplitude, 1f * FireGrenades.recoilAmplitude);
             if (isAuthority)
             {
-                GameObject projPrefab = CloudBurstPlugin.EngiMADProjectile;
+                GameObject projPrefab = Main.EngiMADProjectile;
                 var projInfo = new FireProjectileInfo
                 {
                     crit = RollCrit(),

@@ -9,6 +9,7 @@ using RoR2.Projectile;
 using RoR2.Skills;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using UnityEngine;
 
 namespace CloudBurst
@@ -28,16 +29,34 @@ namespace CloudBurst
     [BepInPlugin("com.TeamCloudburst.CloudBurst", "CloudBurst", "1.0.0")]
 
 
-    public class CloudBurstPlugin : BaseUnityPlugin
+    public class Main : BaseUnityPlugin
     {
-        #region Readonly items and equipment
+        public static BuffIndex SolarBuff;
+
         private readonly HereticBox box;
         private readonly BrokenPrinter summonbox;
         private readonly Grinder grinder;
         private readonly Lumpkin lumpkin;
         private readonly Nokia nokia;
+        private readonly Sundial sundial;
         private readonly MechanicalTrinket trinket;
-        #endregion
+        private readonly Pillow pillow;
+        private readonly UnstableQuantumReactor reactor;
+        public Main()
+        {
+            //equips
+            box = new HereticBox();
+            summonbox = new BrokenPrinter();
+            lumpkin = new Lumpkin();
+            reactor = new UnstableQuantumReactor();
+            //items
+            grinder = new Grinder();
+            nokia = new Nokia();
+            trinket = new MechanicalTrinket();
+            sundial = new Sundial();
+            pillow = new Pillow();
+
+        }
 
         public static List<ItemIndex> bossitemList = new List<ItemIndex>{
             ItemIndex.NovaOnLowHealth,
@@ -47,19 +66,6 @@ namespace CloudBurst
             ItemIndex.SprintWisp,
             //Excluding pearls because those aren't boss items, they come from the Cleansing Pool 
         };
-
-        #region Actual items and equipment 
-        public CloudBurstPlugin()
-        {
-            box = new HereticBox();
-            summonbox = new BrokenPrinter();
-            grinder = new Grinder();
-            lumpkin = new Lumpkin();
-            nokia = new Nokia();
-            trinket = new MechanicalTrinket();
-
-        }
-        #endregion
         public void NokiaCall(float offSet, Transform transform)
         {
             var dropList = Run.instance.availableTier1DropList;
@@ -82,11 +88,8 @@ namespace CloudBurst
 
         public void Awake()
         {
-            On.RoR2.EquipmentSlot.PerformEquipmentAction += EquipmentSlotOnPerformEquipmentAction;
-            GlobalEventManager.onCharacterDeathGlobal += GlobalEventManagerOnOnCharacterDeath;
-
             DoMod();
-            //On.RoR2.GlobalEventManager.OnTeamLevelUp += GlobalEventManagerOnTeamLevelUp;
+            //;
             //On.RoR2.GenericPickupController.GrantItem += GrantItem;
             //On.RoR2.GlobalEventManager.OnHitEnemy += OnHitEnemy;
         }
@@ -95,17 +98,48 @@ namespace CloudBurst
             Setup();
             AddContent();
             ModifyContent();
+            Hook();
         }
         private void Setup()
         {
             RegisterSkills();
             Tokens();
         }
+        private void Hook()
+        {
+            RoR2.TeleporterInteraction.onTeleporterBeginChargingGlobal += TeleporterInteractionOnTeleporterBeginChargingGlobal;
+            On.RoR2.EquipmentSlot.PerformEquipmentAction += EquipmentSlotOnPerformEquipmentAction;
+            //custom buffs
+            On.RoR2.CharacterBody.RecalculateStats += RecalculateStats;
+            On.RoR2.CharacterBody.RemoveBuff += RemoveBuff;
+            //items
+            On.RoR2.GenericPickupController.GrantItem += GrantItem;
+            GlobalEventManager.onCharacterDeathGlobal += GlobalEventManagerOnOnCharacterDeath;
+            On.RoR2.CharacterBody.OnInventoryChanged += CharacterBodyOnInventoryChanged;
+            On.RoR2.GlobalEventManager.OnTeamLevelUp += GlobalEventManager_OnTeamLevelUp;
+        }
+
+        private void GlobalEventManager_OnTeamLevelUp(On.RoR2.GlobalEventManager.orig_OnTeamLevelUp orig, TeamIndex teamIndex)
+        {
+            int connectedPlayers = PlayerCharacterMasterController.instances.Count;
+            for (int i = 0; i < connectedPlayers; i++)
+            {
+                CharacterMaster characterMaster = PlayerCharacterMasterController.instances[i].master;
+                int nokiaCount = characterMaster.inventory.GetItemCount(Nokia.itemIndex);
+                if (characterMaster.hasBody && nokiaCount > 0)
+                {
+                    NokiaCall(0, characterMaster.bodyPrefab.GetComponent<CharacterBody>().transform);
+                }
+            }
+        orig(teamIndex);
+        }
+
         private void AddContent()
         {
             EngineerLoadoutSkills();
             CreateEngineerMADProjectile();
             ArchWisps();
+            RegisterBuffs();
         }
         private void ModifyContent()
         {
@@ -126,6 +160,22 @@ namespace CloudBurst
             LoadoutAPI.AddSkill(typeof(Weapon.Shield));
             LoadoutAPI.AddSkill(typeof(Weapon.Shotgun));
         }
+        private void RegisterBuffs()
+        {
+            BuffDef solarbuff = new BuffDef
+            {
+                buffColor = new Color(235, 182, 92),
+                buffIndex = BuffIndex.Count,
+                canStack = false,
+                eliteIndex = EliteIndex.None,
+                iconPath = "Textures/BuffIcons/texbuffpulverizeicon",
+                isDebuff = true,
+                name = "Solar"
+            };
+
+            Main.SolarBuff = ItemAPI.Add(new CustomBuff(solarbuff.name, solarbuff));
+
+        }
 
         private void CreateEngineerMADProjectile()
         {
@@ -139,7 +189,7 @@ namespace CloudBurst
             EngiMADProjectileProjectileImpactExplosion.blastRadius = 50;
             EngiMADProjectileProjectileImpactExplosion.impactEffect = Resources.Load<GameObject>("prefabs/effects/impacteffects/engimineexplosion");
 
-            MiscHelpers.RegisterNewProjectile(EngiMADProjectile);
+            BaseHelpers.RegisterNewProjectile(EngiMADProjectile);
         }
         private void EngineerLoadoutSkills()
         {
@@ -260,15 +310,16 @@ namespace CloudBurst
             DirectorAPI.DirectorCardHolder ArchWispDirectorCardHolder = new DirectorAPI.DirectorCardHolder();
             DirectorCard ArchWispDirectorCard = new DirectorCard();
 
-            ArchWispBody.baseNameToken = "ARCHWISP_BODY_NAME";
+            ArchWispBody.baseNameToken = "ARCHWISP_BODY_NAME";  
 
             ArchWispCharacterSpawnCard.directorCreditCost = 350;
             ArchWispCharacterSpawnCard.nodeGraphType = RoR2.Navigation.MapNodeGroup.GraphType.Air;
             ArchWispCharacterSpawnCard.noElites = false;
 
+            //ArchWispDirectorCard.
             ArchWispDirectorCard.allowAmbushSpawn = true;
             ArchWispDirectorCard.forbiddenUnlockable = "";
-            ArchWispDirectorCard.minimumStageCompletions = 5;
+            ArchWispDirectorCard.minimumStageCompletions = 4;
             ArchWispDirectorCard.preventOverhead = false;
             ArchWispDirectorCard.requiredUnlockable = "";
             ArchWispDirectorCard.selectionWeight = 1;
@@ -341,18 +392,85 @@ namespace CloudBurst
                 lumpkin.Scream(self.characterBody);
                 return true;
             }
+            if (index == UnstableQuantumReactor.EquipIndex)
+            {
+                reactor.BecomeUnstable(self.characterBody);
+                return true;
+            }
             return orig(self, index); //must
         }
         private void GlobalEventManagerOnOnCharacterDeath(DamageReport damageReport)
         {
-            if (damageReport.victim.body.isChampion && damageReport.attackerBody && damageReport.attackerBody.isPlayerControlled)
+            if (damageReport.victim.body.isChampion && damageReport.attackerBody && damageReport.attackerBody.isPlayerControlled && damageReport != null)
             {
                 CharacterMaster attackerMaster = damageReport.attackerMaster;
                 Inventory inventory = attackerMaster ? attackerMaster.inventory : null;
                 int GrinderCount = inventory.GetItemCount(Grinder.itemIndex);
-                if (GrinderCount > 0 && Util.CheckRoll((1f - 1f / Mathf.Pow((float)(GrinderCount + 1), 0.15f)) * 100f, attackerMaster))
+                if (GrinderCount > 0 && Util.CheckRoll((1f - 1f / Mathf.Pow((float)(GrinderCount + 1), 15f)) * 100f, attackerMaster))
                 {
                     inventory.GiveItem(GetRandomItem(bossitemList), 1);
+                }
+            }
+        }
+
+        private void RemoveBuff(On.RoR2.CharacterBody.orig_RemoveBuff orig, CharacterBody self, BuffIndex buffIndex)
+        {
+            orig(self, buffIndex);
+            if (self && self.inventory && buffIndex == Main.SolarBuff)
+            {
+                self.baseMoveSpeed = self.baseMoveSpeed - 3;
+                self.baseRegen = self.baseRegen - 1;
+                self.baseCrit = self.baseCrit - 3;
+            }
+        }
+        private void RecalculateStats(On.RoR2.CharacterBody.orig_RecalculateStats orig, CharacterBody self)
+        {
+            orig(self);
+            if (self && self.inventory && self.HasBuff(Main.SolarBuff))
+            {
+                self.baseMoveSpeed = self.baseMoveSpeed + 3;
+                self.baseRegen = self.baseRegen + 1;
+                self.baseCrit = self.baseCrit + 3;
+            }
+        }
+        private void GrantItem(On.RoR2.GenericPickupController.orig_GrantItem orig, GenericPickupController self, CharacterBody body, Inventory inventory)
+        {
+            orig(self, body, inventory);
+            if (self && inventory && inventory.GetItemCount(Pillow.itemIndex) > 0)
+            {
+                body.AddTimedBuff(BuffIndex.CloakSpeed, 5 * inventory.GetItemCount(Pillow.itemIndex));
+            }
+        }
+        private void CharacterBodyOnInventoryChanged(On.RoR2.CharacterBody.orig_OnInventoryChanged orig, CharacterBody self)
+        {
+            orig(self);
+            int sundialAmount = self.inventory.GetItemCount(Sundial.itemIndex);
+            if (0 < sundialAmount)
+            {
+                SolarGranter Sun =  self.AddComponent<SolarGranter>();
+                Sun.referenceTransform = self.transform;
+                Sun.buffIndex = Main.SolarBuff;
+                Sun.raycastFrequency = 0.5f;
+                
+            }   
+        }
+        private void TeleporterInteractionOnTeleporterBeginChargingGlobal(TeleporterInteraction obj)
+        {
+            ReadOnlyCollection<TeamComponent> teamMembers = TeamComponent.GetTeamMembers(TeamIndex.Player);
+            int count = 0;
+            foreach (TeamComponent tc in teamMembers)
+            {
+                if (Util.LookUpBodyNetworkUser(tc.body))
+                {
+                    count += tc.body.inventory.GetItemCount(MechanicalTrinket.itemIndex);
+                }
+            }
+            if (count > 0)
+            {
+                foreach (TeamComponent tc in teamMembers)
+                {
+                    obj.holdoutZoneController.radiusIndicator.transform.localScale = new Vector3(obj.holdoutZoneController.baseRadius * 2f, obj.holdoutZoneController.baseRadius * 2f, obj.holdoutZoneController.baseRadius * 2f);
+                    obj.holdoutZoneController.baseRadius = obj.holdoutZoneController.baseRadius * 1.5f  * count;
                 }
             }
         }

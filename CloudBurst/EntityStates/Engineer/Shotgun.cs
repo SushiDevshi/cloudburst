@@ -7,7 +7,7 @@ using EntityStates.Engi.EngiWeapon;
 
 namespace CloudBurst.Weapon
 {
-    public class Shotgun : BaseState
+    public class Shotgun : BaseSkillState
     {
         public bool buttonReleased;
         public float force = 3f;
@@ -70,7 +70,7 @@ namespace CloudBurst.Weapon
                     tracerEffectPrefab = tracerEffectPrefab,
                     hitEffectPrefab = hitEffectPrefab,
                     muzzleName = "MuzzleLeft",
-                    isCrit = Util.CheckRoll(this.critStat, base.characterBody.master),
+                    isCrit = RollCrit(),
                     stopperMask = LayerIndex.world.mask,
                     smartCollision = true,
                     maxDistance = 50f
@@ -95,7 +95,7 @@ namespace CloudBurst.Weapon
                     tracerEffectPrefab = tracerEffectPrefab,
                     hitEffectPrefab = hitEffectPrefab,
                     muzzleName = "MuzzleRight",
-                    isCrit = Util.CheckRoll(this.critStat, base.characterBody.master),
+                    isCrit = RollCrit(),
                     stopperMask = LayerIndex.world.mask,
                     smartCollision = true,
                     maxDistance = 50f

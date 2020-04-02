@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace CloudBurst
 {
-    public static class MiscHelpers
+    public static class BaseHelpers
     {
         #region Catalogs
         /// <summary>
@@ -31,6 +31,11 @@ namespace CloudBurst
                 return true;
             }
             return false;
+        }
+        public static double Percent(float number, int percent)
+        {
+            //return ((double) 80         *       25)/100;
+            return (float)number * percent / 100;
         }
         /*
          *     DirectorAPI.MonsterActions += delegate (List<DirectorAPI.DirectorCardHolder> list, DirectorAPI.StageInfo stage)

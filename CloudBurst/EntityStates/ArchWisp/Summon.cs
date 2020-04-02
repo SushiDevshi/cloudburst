@@ -13,8 +13,8 @@ namespace EntityStates.GreaterWispMonster
         public GameObject effectPrefab;
         public float baseDuration = 2f;
         private float duration;
-        public string muzzleLeft = "muzzleLeft";
-        public string muzzleRight = "muzzleRight";
+        public string muzzleLeft = "MuzzleLeft";
+        public string muzzleRight = "MuzzleRight";
         public override void OnEnter()
         {
             base.OnEnter();
@@ -29,6 +29,7 @@ namespace EntityStates.GreaterWispMonster
             base.PlayAnimation("Gesture", "FireCannons", "FireCannons.playbackRate", this.duration);
             if (base.isAuthority && base.modelLocator && base.modelLocator.modelTransform)
             {
+
                 if (base.modelLocator.modelTransform.GetComponent<ChildLocator>())
                 {
                     ChildLocator childLocator = base.modelLocator.modelTransform.GetComponent<ChildLocator>();
@@ -42,7 +43,7 @@ namespace EntityStates.GreaterWispMonster
                         CharacterMaster characterMaster;
                         characterMaster = new MasterSummon
                         {
-                            masterPrefab = MasterCatalog.FindMasterPrefab("GreaterWispMaster"),
+                            masterPrefab = MasterCatalog.FindMasterPrefab("WispMaster"),
                             position = muzzleLeftTransform.position,
                             rotation = muzzleLeftTransform.rotation,
                             summonerBodyObject = null,
@@ -71,7 +72,7 @@ namespace EntityStates.GreaterWispMonster
                         CharacterMaster characterMaster;
                         characterMaster = new MasterSummon
                         {
-                            masterPrefab = MasterCatalog.FindMasterPrefab("GreaterWispMaster"),
+                            masterPrefab = MasterCatalog.FindMasterPrefab("WispMaster"),
                             position = muzzleRightTransform.position,
                             rotation = muzzleRightTransform.rotation,
                             summonerBodyObject = null,
