@@ -1,7 +1,7 @@
-﻿using System;
+﻿using CloudBurst.Weapon.EntityStates.ArchWispMonster;
 using EntityStates.GreaterWispMonster;
 
-namespace EntityStates.ArchWispMonster
+namespace CloudBurst.Weapon.ArchWispMonster.Weapon
 {
     public class ChargeSummon : ChargeCannons
     {
@@ -10,7 +10,7 @@ namespace EntityStates.ArchWispMonster
             base.FixedUpdate();
             if (base.fixedAge >= this.duration && base.isAuthority)
             {
-                ArchWispSummon ArchWispSummon = new ArchWispSummon();
+                ArchWispSummoner ArchWispSummon = new ArchWispSummoner();
                 this.outer.SetNextState(ArchWispSummon);
                 return;
             }

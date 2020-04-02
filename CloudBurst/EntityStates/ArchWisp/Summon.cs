@@ -1,14 +1,11 @@
-﻿using System;
-using CloudBurst.Equipment;
+﻿using EntityStates;
 using RoR2;
 using RoR2.CharacterAI;
-using RoR2.Projectile;
 using UnityEngine;
-using UnityEngine.Networking;
 
-namespace EntityStates.GreaterWispMonster
+namespace CloudBurst.Weapon.ArchWispMonster
 {
-    public class ArchWispSummon : BaseState
+    public class ArchWispSummoner : BaseState
     {
         public GameObject effectPrefab;
         public float baseDuration = 2f;

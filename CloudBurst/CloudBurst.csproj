@@ -36,6 +36,9 @@
     <Compile Include="EntityStates\Engineer\Shotgun.cs" />
     <Compile Include="EntityStates\Engineer\MaintainAndDefend.cs" />
     <Compile Include="EntityStates\Engineer\MovementShield.cs" />
+    <Compile Include="EntityStates\GrandParent\PortalJump.cs" />
+    <Compile Include="EntityStates\GrandParent\GroundSwipe.cs" />
+    <Compile Include="EntityStates\GrandParent\OffSpring.cs" />
     <Compile Include="Items\Sundial.cs" />
     <Compile Include="Scripts\SolarGranter.cs" />
     <Compile Include="Scripts\Helpers.cs" />

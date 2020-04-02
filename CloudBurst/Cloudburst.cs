@@ -5,12 +5,14 @@ using CloudBurst.Items;
 using R2API;
 using R2API.Utils;
 using RoR2;
+using RoR2.CharacterAI;
 using RoR2.Projectile;
 using RoR2.Skills;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UnityEngine;
+using static RoR2.CharacterAI.AISkillDriver;
 
 namespace CloudBurst
 {
@@ -347,6 +349,153 @@ namespace CloudBurst
             ArchWisp_SL_P.baseMaxStock = 3;
             ArchWisp_SL_P.baseRechargeInterval = 5;
             ArchWisp_SL_P.activationState = new EntityStates.SerializableEntityStateType(typeof(EntityStates.ArchWispMonster.ChargeSummon));
+        }
+        private void RebuildGrandParentSkillDrivers()
+        {
+            GameObject GrandParentMaster = Resources.Load<GameObject>("prefabs/charactermasters/GrandparentMaster");
+            foreach (AISkillDriver skill in GrandParentMaster.GetComponentsInChildren<AISkillDriver>())
+            {
+                DestroyImmediate(skill);
+            }   
+            AISkillDriver GroundSwipe = GrandParentMaster.AddComponent<AISkillDriver>();
+            AISkillDriver SpiritPull = GrandParentMaster.AddComponent<AISkillDriver>();
+            AISkillDriver Offspring  = GrandParentMaster.AddComponent<AISkillDriver>();
+            AISkillDriver PortalJump = GrandParentMaster.AddComponent<AISkillDriver>();
+            AISkillDriver Path = GrandParentMaster.AddComponent<AISkillDriver>();
+
+            GroundSwipe.customName = "Ground Swipe";
+            GroundSwipe.skillSlot = SkillSlot.Primary;
+            //GroundSwipe.requiredSkill =
+            GroundSwipe.requireSkillReady = true;
+            GroundSwipe.requireEquipmentReady = false;
+            GroundSwipe.moveTargetType = TargetType.CurrentEnemy;
+            GroundSwipe.minUserHealthFraction = float.NegativeInfinity;
+            GroundSwipe.maxUserHealthFraction = float.PositiveInfinity;
+            GroundSwipe.minTargetHealthFraction = float.NegativeInfinity;
+            GroundSwipe.maxTargetHealthFraction = float.PositiveInfinity;
+            GroundSwipe.minDistance = 0;
+            GroundSwipe.maxDistance = 15;
+            GroundSwipe.selectionRequiresTargetLoS = false;
+            GroundSwipe.activationRequiresTargetLoS = true;
+            GroundSwipe.activationRequiresAimConfirmation = true;
+            GroundSwipe.movementType = MovementType.ChaseMoveTarget;
+            GroundSwipe.moveInputScale = 1;
+            GroundSwipe.aimType = AimType.AtMoveTarget;
+            GroundSwipe.ignoreNodeGraph = true;
+            GroundSwipe.driverUpdateTimerOverride = -1;
+            GroundSwipe.resetCurrentEnemyOnNextDriverSelection = false;
+            GroundSwipe.noRepeat = false;
+            GroundSwipe.shouldSprint = false;
+            GroundSwipe.shouldFireEquipment = false;
+            GroundSwipe.shouldTapButton = false;
+
+
+            SpiritPull.customName = "Spirit Pull";
+            SpiritPull.skillSlot = SkillSlot.Secondary;
+            //SpiritPull.requiredSkill =
+            SpiritPull.requireSkillReady = true;
+            SpiritPull.requireEquipmentReady = false;
+            SpiritPull.moveTargetType = TargetType.CurrentEnemy;
+            SpiritPull.minUserHealthFraction = float.NegativeInfinity;
+            SpiritPull.maxUserHealthFraction = float.PositiveInfinity;
+            SpiritPull.minTargetHealthFraction = float.NegativeInfinity; 
+            SpiritPull.maxTargetHealthFraction = float.PositiveInfinity;
+            SpiritPull.minDistance = 15;
+            SpiritPull.maxDistance = 200;
+            SpiritPull.selectionRequiresTargetLoS = false;
+            SpiritPull.activationRequiresTargetLoS = false;
+            SpiritPull.activationRequiresAimConfirmation = false;
+            SpiritPull.movementType = MovementType.ChaseMoveTarget;
+            SpiritPull.moveInputScale = 1;
+            SpiritPull.aimType = AimType.AtMoveTarget;
+            SpiritPull.ignoreNodeGraph = true;
+            SpiritPull.driverUpdateTimerOverride = -1;
+            SpiritPull.resetCurrentEnemyOnNextDriverSelection = false;
+            SpiritPull.noRepeat = false;
+            SpiritPull.shouldSprint = false;
+            SpiritPull.shouldFireEquipment = false;
+            SpiritPull.shouldTapButton = false;
+
+            Offspring.customName = "Off Spring";
+            Offspring.skillSlot = SkillSlot.Utility;
+            //Offspring.requiredSkill = 
+            Offspring.requireSkillReady = true;
+            Offspring.requireEquipmentReady = false;
+            Offspring.moveTargetType = TargetType.CurrentEnemy;
+            Offspring.minUserHealthFraction = float.NegativeInfinity;
+            Offspring.maxUserHealthFraction = float.PositiveInfinity;
+            Offspring.minTargetHealthFraction = float.NegativeInfinity;
+            Offspring.maxTargetHealthFraction = float.PositiveInfinity;
+            Offspring.minDistance = 15;
+            Offspring.maxDistance = float.PositiveInfinity;
+            Offspring.selectionRequiresTargetLoS = false;
+            Offspring.activationRequiresTargetLoS = false;
+            Offspring.activationRequiresAimConfirmation = false;
+            Offspring.movementType = MovementType.ChaseMoveTarget;
+            Offspring.moveInputScale = 1;
+            Offspring.aimType = AimType.AtMoveTarget;
+            Offspring.ignoreNodeGraph = true;
+            Offspring.driverUpdateTimerOverride = -1;
+            Offspring.resetCurrentEnemyOnNextDriverSelection = false;
+            Offspring.noRepeat = false;
+            Offspring.shouldSprint = false;
+            Offspring.shouldFireEquipment = false;
+            Offspring.shouldTapButton = false;
+
+
+            PortalJump.customName = "Portal Jump";
+            PortalJump.skillSlot = SkillSlot.Special;
+            //PortalJump. requiredSkill =
+            PortalJump.requireSkillReady = true;
+            PortalJump.requireEquipmentReady = false;
+            PortalJump.moveTargetType = TargetType.CurrentEnemy;
+            PortalJump.minUserHealthFraction = float.NegativeInfinity;
+            PortalJump.maxUserHealthFraction = float.PositiveInfinity;
+            PortalJump.minTargetHealthFraction = float.NegativeInfinity;
+            PortalJump.maxTargetHealthFraction = float.PositiveInfinity;
+            PortalJump.minDistance = 50;
+            PortalJump.maxDistance = float.PositiveInfinity;
+            PortalJump.selectionRequiresTargetLoS = false;
+            PortalJump.activationRequiresTargetLoS = false;
+            PortalJump.activationRequiresAimConfirmation = false;
+            PortalJump.movementType = MovementType.ChaseMoveTarget;
+            PortalJump.moveInputScale = 1;
+            PortalJump.aimType = AimType.AtMoveTarget;
+            PortalJump.ignoreNodeGraph = true;
+            PortalJump.driverUpdateTimerOverride = -1;
+            PortalJump.resetCurrentEnemyOnNextDriverSelection = false;
+            PortalJump.noRepeat = false;
+            PortalJump.shouldSprint = false;
+            PortalJump.shouldFireEquipment = false;
+            PortalJump.shouldTapButton = false;
+
+
+            Path.customName = "Path";
+            Path.skillSlot = SkillSlot.None;
+            //Path.requiredSkill =
+            Path.requireSkillReady = false;
+            Path.requireEquipmentReady = false;
+            Path.moveTargetType = TargetType.CurrentEnemy;
+            Path.minUserHealthFraction = float.NegativeInfinity;
+            Path.maxUserHealthFraction = float.PositiveInfinity;
+            Path.minTargetHealthFraction = float.NegativeInfinity;
+            Path.maxTargetHealthFraction = float.PositiveInfinity;
+            Path.minDistance = 0;
+            Path.maxDistance = float.PositiveInfinity;
+            Path.selectionRequiresTargetLoS = false;
+            Path.activationRequiresTargetLoS = false;
+            Path.activationRequiresAimConfirmation = false;
+            Path.movementType = MovementType.ChaseMoveTarget;
+            Path.moveInputScale = 1;
+            Path.aimType = AimType.AtMoveTarget;
+            Path.ignoreNodeGraph = true;
+            Path.driverUpdateTimerOverride = -1;
+            Path.resetCurrentEnemyOnNextDriverSelection = false;
+            Path.noRepeat = false;
+            Path.shouldSprint = false;
+            Path.shouldFireEquipment = false;
+            Path.shouldTapButton = false;
+
         }
         private void Tokens()
         {
