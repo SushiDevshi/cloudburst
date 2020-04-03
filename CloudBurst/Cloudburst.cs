@@ -1,7 +1,10 @@
 ﻿using BepInEx;
-using BepInEx.Bootstrap;
 using CloudBurst.Equipment;
 using CloudBurst.Items;
+using CloudBurst.Weapon.ArchWispMonster;
+using CloudBurst.Weapon.ArchWispMonster.Weapon;
+using CloudBurst.Weapon.GrandParentBoss;
+using EntityStates;
 using R2API;
 using R2API.Utils;
 using RoR2;
@@ -95,79 +98,55 @@ namespace CloudBurst
             //On.RoR2.GenericPickupController.GrantItem += GrantItem;
             //On.RoR2.GlobalEventManager.OnHitEnemy += OnHitEnemy;
         }
+        private void Setup()
+        {
+            RegisterSkills();
+            Tokens();
+        }
+        #region Setup
+        private void RegisterSkills()
+        {
+            LoadoutAPI.AddSkill(typeof(ArchWispSummoner));
+            LoadoutAPI.AddSkill(typeof(ChargeSummon));
+            LoadoutAPI.AddSkill(typeof(PortalJump));
+            LoadoutAPI.AddSkill(typeof(Weapon.MANDA));
+            LoadoutAPI.AddSkill(typeof(Weapon.Shield));
+            LoadoutAPI.AddSkill(typeof(Weapon.Shotgun));
+        }
+        private void Tokens()
+        {
+            R2API.AssetPlus.Languages.AddToken("ARCHWISP_BODY_NAME", "Archaic Wisp");
+            R2API.AssetPlus.Languages.AddToken("ENGINEER_SECONDARY_MAD_NAME", "Maintain and Defend");
+            R2API.AssetPlus.Languages.AddToken("ENGINEER_SECONDARY_MAD_DESCRIPTION", "Fire a grenade that <style=cIsDamage>stuns</style> and <style=cIsUtility>spreads enemies in all directions</style>.");
+            R2API.AssetPlus.Languages.AddToken("ENGINEER_PRIMARY_TR12GS_NAME", "TR12 Gauss Shotgun");
+            R2API.AssetPlus.Languages.AddToken("ENGINEER_PRIMARY_TR12GS_DESCRIPTION", "bro its a shotgun bro bro");
+            R2API.AssetPlus.Languages.AddToken("ENGINEER_UTILITY_MS_NAME", "Mobile Shield");
+            R2API.AssetPlus.Languages.AddToken("ENGINEER_UTILITY_MS_DESCRIPTION", "Release an impenetrable shield that <style=cIsUtility>enemies cannot enter</style>.");
+        }
+        #endregion
         private void DoMod()
         {
             Setup();
             AddContent();
             ModifyContent();
             Hook();
+            
         }
-        private void Setup()
-        {
-            RegisterSkills();
-            Tokens();
-        }
-        private void Hook()
-        {
-            RoR2.TeleporterInteraction.onTeleporterBeginChargingGlobal += TeleporterInteractionOnTeleporterBeginChargingGlobal;
-            On.RoR2.EquipmentSlot.PerformEquipmentAction += EquipmentSlotOnPerformEquipmentAction;
-            //custom buffs
-            On.RoR2.CharacterBody.RecalculateStats += RecalculateStats;
-            On.RoR2.CharacterBody.RemoveBuff += RemoveBuff;
-            //items
-            On.RoR2.GenericPickupController.GrantItem += GrantItem;
-            GlobalEventManager.onCharacterDeathGlobal += GlobalEventManagerOnOnCharacterDeath;
-            On.RoR2.CharacterBody.OnInventoryChanged += CharacterBodyOnInventoryChanged;
-            On.RoR2.GlobalEventManager.OnTeamLevelUp += GlobalEventManager_OnTeamLevelUp;
-        }
-
-        private void GlobalEventManager_OnTeamLevelUp(On.RoR2.GlobalEventManager.orig_OnTeamLevelUp orig, TeamIndex teamIndex)
-        {
-            int connectedPlayers = PlayerCharacterMasterController.instances.Count;
-            for (int i = 0; i < connectedPlayers; i++)
-            {
-                CharacterMaster characterMaster = PlayerCharacterMasterController.instances[i].master;
-                int nokiaCount = characterMaster.inventory.GetItemCount(Nokia.itemIndex);
-                if (characterMaster.hasBody && nokiaCount > 0)
-                {
-                    NokiaCall(0, characterMaster.bodyPrefab.GetComponent<CharacterBody>().transform);
-                }
-            }
-        orig(teamIndex);
-        }
-
         private void AddContent()
         {
             EngineerLoadoutSkills();
             CreateEngineerMADProjectile();
             ArchWisps();
             RegisterBuffs();
+            RebuildGrandParent();
         }
-        private void ModifyContent()
-        {
-            MakeIceWallSolid();
-            ModifyPlasmaBolt();
-        }
-
-        private void MakeIceWallSolid()
-        {
-            GameObject ArtificerIceWallPrefab = Resources.Load<GameObject>("prefabs/projectiles/mageicewallpillarprojectile");
-            ArtificerIceWallPrefab.layer = 11;
-        }
-        private void RegisterSkills()
-        {
-            LoadoutAPI.AddSkill(typeof(EntityStates.GreaterWispMonster.ArchWispSummon));
-            LoadoutAPI.AddSkill(typeof(EntityStates.ArchWispMonster.ChargeSummon));
-            LoadoutAPI.AddSkill(typeof(Weapon.MANDA));
-            LoadoutAPI.AddSkill(typeof(Weapon.Shield));
-            LoadoutAPI.AddSkill(typeof(Weapon.Shotgun));
-        }
+        #region Add content
         private void RegisterBuffs()
         {
             BuffDef solarbuff = new BuffDef
             {
                 buffColor = new Color(235, 182, 92),
-                buffIndex = BuffIndex.Count,
+                buffIndex = BuffIndex.Count,    
                 canStack = false,
                 eliteIndex = EliteIndex.None,
                 iconPath = "Textures/BuffIcons/texbuffpulverizeicon",
@@ -178,7 +157,6 @@ namespace CloudBurst
             Main.SolarBuff = ItemAPI.Add(new CustomBuff(solarbuff.name, solarbuff));
 
         }
-
         private void CreateEngineerMADProjectile()
         {
             EngiMADProjectile = Resources.Load<GameObject>("prefabs/projectiles/commandogrenadeprojectile").InstantiateClone("EngiMADProjectile", false);
@@ -195,7 +173,7 @@ namespace CloudBurst
         }
         private void EngineerLoadoutSkills()
         {
-
+            
             GameObject Engineer = Resources.Load<GameObject>("prefabs/characterbodies/engibody");
             var Engineer_SL = Engineer.GetComponent<SkillLocator>();
             var Engineer_SL_SD_SF = Engineer_SL.secondary.skillFamily;
@@ -348,18 +326,60 @@ namespace CloudBurst
             ArchWisp_SL_P.stockToConsume = 1;
             ArchWisp_SL_P.baseMaxStock = 3;
             ArchWisp_SL_P.baseRechargeInterval = 5;
-            ArchWisp_SL_P.activationState = new EntityStates.SerializableEntityStateType(typeof(EntityStates.ArchWispMonster.ChargeSummon));
+            ArchWisp_SL_P.activationState = new EntityStates.SerializableEntityStateType(typeof(ChargeSummon));
+        }
+
+        #endregion
+
+        #region Modify content
+        private void ModifyContent()
+        {
+            MakeIceWallSolid();
+            ModifyPlasmaBolt();
+        }
+        private void ModifyPlasmaBolt()
+        {
+            GameObject LoaderPylon = Resources.Load<GameObject>("prefabs/projectiles/loaderpylon");
+            GameObject PlasmaBolt = Resources.Load<GameObject>("prefabs/projectiles/magelightningboltbasic");
+
+
+            ProjectileController PlasmaBolt_PC = PlasmaBolt.GetComponent<ProjectileController>();
+            ProjectileProximityBeamController PlasmaBolt_PPBC = PlasmaBolt.AddComponent<ProjectileProximityBeamController>();
+            ProjectileProximityBeamController LoaderPylon_PPBC = LoaderPylon.GetComponent<ProjectileProximityBeamController>();
+
+            PlasmaBolt_PC.ghostPrefab = Resources.Load<GameObject>("prefabs/projectileghosts/electricwormseekerghost");
+
+            PlasmaBolt_PPBC.attackFireCount = LoaderPylon_PPBC.attackFireCount;
+            PlasmaBolt_PPBC.attackRange = 10;
+            PlasmaBolt_PPBC.bounces = 0;
+            PlasmaBolt_PPBC.damageCoefficient = 0.5f;
+            PlasmaBolt_PPBC.lightningType = RoR2.Orbs.LightningOrb.LightningType.Ukulele;
+            PlasmaBolt_PPBC.listClearInterval = LoaderPylon_PPBC.listClearInterval;
+            PlasmaBolt_PPBC.maxAngleFilter = LoaderPylon_PPBC.maxAngleFilter;
+            PlasmaBolt_PPBC.minAngleFilter = LoaderPylon_PPBC.minAngleFilter;
+            PlasmaBolt_PPBC.procCoefficient = 0.2f;
+        }
+
+        private void MakeIceWallSolid()
+        {
+            GameObject ArtificerIceWallPrefab = Resources.Load<GameObject>("prefabs/projectiles/mageicewallpillarprojectile");
+            ArtificerIceWallPrefab.layer = 11;
+        }
+        #endregion
+
+        #region GrandParent
+        private void RebuildGrandParent()
+        {
+            RebuildGrandParentSkillDrivers();
+            RebuildSkills();
         }
         private void RebuildGrandParentSkillDrivers()
         {
             GameObject GrandParentMaster = Resources.Load<GameObject>("prefabs/charactermasters/GrandparentMaster");
-            foreach (AISkillDriver skill in GrandParentMaster.GetComponentsInChildren<AISkillDriver>())
-            {
-                DestroyImmediate(skill);
-            }   
+
             AISkillDriver GroundSwipe = GrandParentMaster.AddComponent<AISkillDriver>();
             AISkillDriver SpiritPull = GrandParentMaster.AddComponent<AISkillDriver>();
-            AISkillDriver Offspring  = GrandParentMaster.AddComponent<AISkillDriver>();
+            AISkillDriver Offspring = GrandParentMaster.AddComponent<AISkillDriver>();
             AISkillDriver PortalJump = GrandParentMaster.AddComponent<AISkillDriver>();
             AISkillDriver Path = GrandParentMaster.AddComponent<AISkillDriver>();
 
@@ -398,7 +418,7 @@ namespace CloudBurst
             SpiritPull.moveTargetType = TargetType.CurrentEnemy;
             SpiritPull.minUserHealthFraction = float.NegativeInfinity;
             SpiritPull.maxUserHealthFraction = float.PositiveInfinity;
-            SpiritPull.minTargetHealthFraction = float.NegativeInfinity; 
+            SpiritPull.minTargetHealthFraction = float.NegativeInfinity;
             SpiritPull.maxTargetHealthFraction = float.PositiveInfinity;
             SpiritPull.minDistance = 15;
             SpiritPull.maxDistance = 200;
@@ -495,39 +515,512 @@ namespace CloudBurst
             Path.shouldSprint = false;
             Path.shouldFireEquipment = false;
             Path.shouldTapButton = false;
+        }
+        private void RebuildSkills()
+        {
+            GameObject GrandParent = Resources.Load<GameObject>("prefabs/characterbodies/GrandParentBody");
+            GP_DestroyGenericSkillComponents(GrandParent);
+            GP_CreateSkillFamilies(GrandParent.GetComponent<SkillLocator>(), GrandParent);
+            GP_CreatePrimary(GrandParent.GetComponent<SkillLocator>());
+            GP_CreateSecondary(GrandParent.GetComponent<SkillLocator>());
+            GP_CreateUtility(GrandParent.GetComponent<SkillLocator>());
+            GP_CreateSpecial(GrandParent.GetComponent<SkillLocator>());
 
         }
-        private void Tokens()
+        private void GP_DestroyGenericSkillComponents(GameObject gameObject)
         {
-            R2API.AssetPlus.Languages.AddToken("ARCHWISP_BODY_NAME", "Archaic Wisp");
-            R2API.AssetPlus.Languages.AddToken("ENGINEER_SECONDARY_MAD_NAME", "Maintain and Defend");
-            R2API.AssetPlus.Languages.AddToken("ENGINEER_SECONDARY_MAD_DESCRIPTION", "Fire a grenade that <style=cIsDamage>stuns</style> and <style=cIsUtility>spreads enemies in all directions</style>.");
-            R2API.AssetPlus.Languages.AddToken("ENGINEER_PRIMARY_TR12GS_NAME", "TR12 Gauss Shotgun");
-            R2API.AssetPlus.Languages.AddToken("ENGINEER_PRIMARY_TR12GS_DESCRIPTION", "bro its a shotgun bro bro");
-            R2API.AssetPlus.Languages.AddToken("ENGINEER_UTILITY_MS_NAME", "Mobile Shield");
-            R2API.AssetPlus.Languages.AddToken("ENGINEER_UTILITY_MS_DESCRIPTION", "Release an impenetrable shield that <style=cIsUtility>enemies cannot enter</style>.");
+            foreach (GenericSkill skill in gameObject.GetComponentsInChildren<GenericSkill>())
+            {
+                DestroyImmediate(skill);
+            }
         }
-        private void ModifyPlasmaBolt()
+        private void GP_CreateSkillFamilies(SkillLocator skillLocator, GameObject myCharacter)
         {
-            GameObject LoaderPylon = Resources.Load<GameObject>("prefabs/projectiles/loaderpylon");
-            GameObject PlasmaBolt = Resources.Load<GameObject>("prefabs/projectiles/magelightningboltbasic");
+            skillLocator.SetFieldValue<GenericSkill[]>("allSkills", new GenericSkill[0]);
+            {
+                skillLocator.primary = myCharacter.AddComponent<GenericSkill>();
+                SkillFamily newFamily = ScriptableObject.CreateInstance<SkillFamily>();
+                newFamily.variants = new SkillFamily.Variant[1];
+                LoadoutAPI.AddSkillFamily(newFamily);
+                skillLocator.primary.SetFieldValue("_skillFamily", newFamily);
+            }
+            {
+                skillLocator.secondary = myCharacter.AddComponent<GenericSkill>();
+                SkillFamily newFamily = ScriptableObject.CreateInstance<SkillFamily>();
+                newFamily.variants = new SkillFamily.Variant[1];
+                LoadoutAPI.AddSkillFamily(newFamily);
+                skillLocator.secondary.SetFieldValue("_skillFamily", newFamily);
+            }
+            {
+                skillLocator.utility = myCharacter.AddComponent<GenericSkill>();
+                SkillFamily newFamily = ScriptableObject.CreateInstance<SkillFamily>();
+                newFamily.variants = new SkillFamily.Variant[1];
+                LoadoutAPI.AddSkillFamily(newFamily);
+                skillLocator.utility.SetFieldValue("_skillFamily", newFamily);
+            }
+            {
+                skillLocator.special = myCharacter.AddComponent<GenericSkill>();
+                SkillFamily newFamily = ScriptableObject.CreateInstance<SkillFamily>();
+                newFamily.variants = new SkillFamily.Variant[1];
+                LoadoutAPI.AddSkillFamily(newFamily);
+                skillLocator.special.SetFieldValue("_skillFamily", newFamily);
+            }
+        }
+        private void GP_CreatePrimary(SkillLocator skillLocator)
+        {
+            SkillDef primary = ScriptableObject.CreateInstance<SkillDef>();
+            primary.activationState = new SerializableEntityStateType(typeof(EntityStates.GrandParentBoss.GroundSwipe)); //You can also "steal" another skill by setting this to another skill, ex: "new SerializableEntityStateType(typeof(EntityStates.Commando.CombatDodge))
+            primary.activationStateMachineName = "Weapon"; //Setting this to "Body" overrides your current movement
+            primary.baseMaxStock = 1; //How many charges you hold at once
+            primary.baseRechargeInterval = 0f; //how long it takes to recharge a stock
+            primary.beginSkillCooldownOnSkillEnd = true;
+            primary.canceledFromSprinting = false; //if set to true, sprinting will immediately end the skill
+            primary.fullRestockOnAssign = true;
+            primary.interruptPriority = InterruptPriority.Skill; //The priority of the skill (If performing an important skill, lower priority skills won't activate)
+            primary.isBullets = false; //if set to true, when the cooldown ends it will reload ALL stock
+            primary.isCombatSkill = true;
+            primary.mustKeyPress = false; //If true, you MUST press the key each time for it to activate, otherwise it auto-fires
+            primary.noSprint = false; //Whether or not to stop sprinting when activating the attack
+            primary.rechargeStock = 1;
+            primary.requiredStock = 1;
+            primary.shootDelay = 0.1f;
+            primary.stockToConsume = 0;
+            primary.skillDescriptionToken = "a"; //Description for the skill, you can use <style>'s to add colors
+            primary.skillName = "a"; //The game-readable name for the skill
+            primary.skillNameToken = "cumsick god"; //The visible name of the skill
+            //primary.icon = Sprite.Create(this.HURT, new Rect(0, 0, this.HURT.width, this.HURT.height), new Vector2(.5f, .5f));
+
+            LoadoutAPI.AddSkillDef(primary);
+            SkillFamily primarySkillFamily = skillLocator.primary.skillFamily;
+
+            primarySkillFamily.variants[0] = new SkillFamily.Variant
+            {
+                skillDef = primary,
+                unlockableName = "",
+                viewableNode = new ViewablesCatalog.Node(primary.skillNameToken, false, null)
+
+            };
+        }
+        private void GP_CreateSecondary(SkillLocator skillLocator)
+        {
+            SkillDef secondarySkillDef = ScriptableObject.CreateInstance<SkillDef>();
+            secondarySkillDef.activationState = new SerializableEntityStateType(typeof(EntityStates.GrandParentBoss.SpiritPull));
+            secondarySkillDef.activationStateMachineName = "Weapon";
+            secondarySkillDef.baseMaxStock = 1;
+            secondarySkillDef.baseRechargeInterval = 5f;
+            secondarySkillDef.beginSkillCooldownOnSkillEnd = true;
+            secondarySkillDef.canceledFromSprinting = false;
+            secondarySkillDef.fullRestockOnAssign = true;
+            secondarySkillDef.interruptPriority = InterruptPriority.PrioritySkill;
+            secondarySkillDef.isBullets = false;
+            secondarySkillDef.isCombatSkill = true;
+            secondarySkillDef.mustKeyPress = false;
+            secondarySkillDef.noSprint = false;
+            secondarySkillDef.rechargeStock = 1;
+            secondarySkillDef.requiredStock = 1;
+            secondarySkillDef.shootDelay = 0.5f;
+            secondarySkillDef.stockToConsume = 1;
+            secondarySkillDef.skillDescriptionToken = "AAAAAAAAAAAAAAAAAAAAAA";
+            secondarySkillDef.skillName = "aaa";
+            secondarySkillDef.skillNameToken = "aa";
+
+            LoadoutAPI.AddSkillDef(secondarySkillDef);
+            SkillFamily secondarySkillFamily = skillLocator.secondary.skillFamily;
+
+            secondarySkillFamily.variants[0] = new SkillFamily.Variant
+            {
+                skillDef = secondarySkillDef,
+                unlockableName = "",
+                viewableNode = new ViewablesCatalog.Node(secondarySkillDef.skillNameToken, false, null)
+
+            };
+        }
+
+        private void GP_CreateUtility(SkillLocator skillLocator)
+        {
+            SkillDef utilitySkillDef = ScriptableObject.CreateInstance<SkillDef>();
+            utilitySkillDef.activationState = new SerializableEntityStateType(typeof(EntityStates.GrandParentBoss.Offspring));
+            utilitySkillDef.activationStateMachineName = "Weapon";
+            utilitySkillDef.baseMaxStock = 1;
+            utilitySkillDef.baseRechargeInterval = 3f;
+            utilitySkillDef.beginSkillCooldownOnSkillEnd = true;
+            utilitySkillDef.canceledFromSprinting = false;
+            utilitySkillDef.fullRestockOnAssign = true;
+            utilitySkillDef.interruptPriority = InterruptPriority.PrioritySkill;
+            utilitySkillDef.isBullets = false;
+            utilitySkillDef.isCombatSkill = false;
+            utilitySkillDef.mustKeyPress = false;
+            utilitySkillDef.noSprint = false;
+            utilitySkillDef.rechargeStock = 1;
+            utilitySkillDef.requiredStock = 1;
+            utilitySkillDef.shootDelay = 0.5f;
+            utilitySkillDef.stockToConsume = 1;
+            utilitySkillDef.skillDescriptionToken = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+            utilitySkillDef.skillName = "AAAAAAAAAAAAAA";
+            utilitySkillDef.skillNameToken = "AAAAAAAAAAAA";
+            //utilitySkillDef.icon = Sprite.Create(this.OVERCLOCK, new Rect(0, 0, this.OVERCLOCK.width, this.OVERCLOCK.height), new Vector2(.5f, .5f));
+
+            LoadoutAPI.AddSkillDef(utilitySkillDef);
+            SkillFamily utilitySkillFamily = skillLocator.utility.skillFamily;
+
+            utilitySkillFamily.variants[0] = new SkillFamily.Variant
+            {
+                skillDef = utilitySkillDef,
+                unlockableName = "",
+                viewableNode = new ViewablesCatalog.Node(utilitySkillDef.skillNameToken, false, null)
+
+            };
+        }
+        private void GP_CreateSpecial(SkillLocator skillLocator)
+        {
+            SkillDef specialSkillDef = ScriptableObject.CreateInstance<SkillDef>();
+            specialSkillDef.activationState = new SerializableEntityStateType(typeof(PortalJump));
+            specialSkillDef.activationStateMachineName = "Weapon";
+            specialSkillDef.baseMaxStock = 1;
+            specialSkillDef.baseRechargeInterval = 12f;
+            specialSkillDef.beginSkillCooldownOnSkillEnd = false;
+            specialSkillDef.canceledFromSprinting = false;
+            specialSkillDef.fullRestockOnAssign = false;
+            specialSkillDef.interruptPriority = InterruptPriority.Any;
+            specialSkillDef.isBullets = false;
+            specialSkillDef.isCombatSkill = true;
+            specialSkillDef.mustKeyPress = false;
+            specialSkillDef.noSprint = false;
+            specialSkillDef.rechargeStock = 1;
+            specialSkillDef.requiredStock = 1;
+            specialSkillDef.shootDelay = 1f;
+            specialSkillDef.stockToConsume = 1;
+            specialSkillDef.skillDescriptionToken = "AAAAAAAAAAAAAAAAAAAA";
+            specialSkillDef.skillName = "AAAAAAAAAAAAA";
+            specialSkillDef.skillNameToken = "AAAAAAAAAAAAAA";
+
+            LoadoutAPI.AddSkillDef(specialSkillDef);
+            SkillFamily specialSkillFamily = skillLocator.special.skillFamily;
 
 
-            ProjectileController PlasmaBolt_PC = PlasmaBolt.GetComponent<ProjectileController>();
-            ProjectileProximityBeamController PlasmaBolt_PPBC = PlasmaBolt.AddComponent<ProjectileProximityBeamController>();
-            ProjectileProximityBeamController LoaderPylon_PPBC = LoaderPylon.GetComponent<ProjectileProximityBeamController>();
+            specialSkillFamily.variants[0] = new SkillFamily.Variant
+            {
+                skillDef = specialSkillDef,
+                unlockableName = "",
+                viewableNode = new ViewablesCatalog.Node(specialSkillDef.skillNameToken, false, null)
 
-            PlasmaBolt_PC.ghostPrefab = Resources.Load<GameObject>("prefabs/projectileghosts/electricwormseekerghost");
+            };
+        }
+        #endregion
 
-            PlasmaBolt_PPBC.attackFireCount = LoaderPylon_PPBC.attackFireCount;
-            PlasmaBolt_PPBC.attackRange = 10;
-            PlasmaBolt_PPBC.bounces = 0;
-            PlasmaBolt_PPBC.damageCoefficient = 0.5f;
-            PlasmaBolt_PPBC.lightningType = RoR2.Orbs.LightningOrb.LightningType.Ukulele;
-            PlasmaBolt_PPBC.listClearInterval = LoaderPylon_PPBC.listClearInterval;
-            PlasmaBolt_PPBC.maxAngleFilter = LoaderPylon_PPBC.maxAngleFilter;
-            PlasmaBolt_PPBC.minAngleFilter = LoaderPylon_PPBC.minAngleFilter;
-            PlasmaBolt_PPBC.procCoefficient = 0.2f;
+        #region Mega mushroom
+        private void CreateMegaMushroom()
+        {
+            RebuildGrandParentSkillDrivers();
+            RebuildSkills();
+        }
+        private void MM_RebuildSkillDrivers()
+        {
+            GameObject MiniMushroomMaster = Resources.Load<GameObject>("prefabs/charactermasters/MiniMushroomMaster");
+
+            AISkillDriver SporeGrenade = MiniMushroomMaster.AddComponent<AISkillDriver>();
+            AISkillDriver SpiritPull = MiniMushroomMaster.AddComponent<AISkillDriver>();
+            AISkillDriver Offspring = MiniMushroomMaster.AddComponent<AISkillDriver>();
+
+            SporeGrenade.customName = "Spore Grenade";
+            SporeGrenade.skillSlot = SkillSlot.Primary;
+            //GroundSwipe.requiredSkill =
+            SporeGrenade.requireSkillReady = true;
+            SporeGrenade.requireEquipmentReady = false;
+            SporeGrenade.moveTargetType = TargetType.CurrentEnemy;
+            SporeGrenade.minUserHealthFraction = 0.5f;
+            SporeGrenade.maxUserHealthFraction = float.PositiveInfinity;
+            SporeGrenade.minTargetHealthFraction = float.NegativeInfinity;
+            SporeGrenade.maxTargetHealthFraction = float.PositiveInfinity;
+            SporeGrenade.minDistance = 0;
+            SporeGrenade.maxDistance = 60;
+            SporeGrenade.selectionRequiresTargetLoS = false;
+            SporeGrenade.activationRequiresTargetLoS = true;
+            SporeGrenade.activationRequiresAimConfirmation = true;
+            SporeGrenade.movementType = MovementType.StrafeMovetarget;
+            SporeGrenade.moveInputScale = 1;
+            SporeGrenade.aimType = AimType.AtMoveTarget;
+            SporeGrenade.ignoreNodeGraph = false;
+            SporeGrenade.driverUpdateTimerOverride = -1;
+            SporeGrenade.resetCurrentEnemyOnNextDriverSelection = false;
+            SporeGrenade.noRepeat = false;
+            SporeGrenade.shouldSprint = false;
+            SporeGrenade.shouldFireEquipment = false;
+            SporeGrenade.shouldTapButton = false;
+
+            SpiritPull.customName = "Spirit Pull";
+            SpiritPull.skillSlot = SkillSlot.Secondary;
+            //SpiritPull.requiredSkill =
+            SpiritPull.requireSkillReady = true;
+            SpiritPull.requireEquipmentReady = false;
+            SpiritPull.moveTargetType = TargetType.CurrentEnemy;
+            SpiritPull.minUserHealthFraction = float.NegativeInfinity;
+            SpiritPull.maxUserHealthFraction = float.PositiveInfinity;
+            SpiritPull.minTargetHealthFraction = float.NegativeInfinity;
+            SpiritPull.maxTargetHealthFraction = float.PositiveInfinity;
+            SpiritPull.minDistance = 15;
+            SpiritPull.maxDistance = 200;
+            SpiritPull.selectionRequiresTargetLoS = false;
+            SpiritPull.activationRequiresTargetLoS = false;
+            SpiritPull.activationRequiresAimConfirmation = false;
+            SpiritPull.movementType = MovementType.ChaseMoveTarget;
+            SpiritPull.moveInputScale = 1;
+            SpiritPull.aimType = AimType.AtMoveTarget;
+            SpiritPull.ignoreNodeGraph = true;
+            SpiritPull.driverUpdateTimerOverride = -1;
+            SpiritPull.resetCurrentEnemyOnNextDriverSelection = false;
+            SpiritPull.noRepeat = false;
+            SpiritPull.shouldSprint = false;
+            SpiritPull.shouldFireEquipment = false;
+            SpiritPull.shouldTapButton = false;
+
+            Offspring.customName = "Off Spring";
+            Offspring.skillSlot = SkillSlot.Utility;
+            //Offspring.requiredSkill = 
+            Offspring.requireSkillReady = true;
+            Offspring.requireEquipmentReady = false;
+            Offspring.moveTargetType = TargetType.CurrentEnemy;
+            Offspring.minUserHealthFraction = float.NegativeInfinity;
+            Offspring.maxUserHealthFraction = float.PositiveInfinity;
+            Offspring.minTargetHealthFraction = float.NegativeInfinity;
+            Offspring.maxTargetHealthFraction = float.PositiveInfinity;
+            Offspring.minDistance = 15;
+            Offspring.maxDistance = float.PositiveInfinity;
+            Offspring.selectionRequiresTargetLoS = false;
+            Offspring.activationRequiresTargetLoS = false;
+            Offspring.activationRequiresAimConfirmation = false;
+            Offspring.movementType = MovementType.ChaseMoveTarget;
+            Offspring.moveInputScale = 1;
+            Offspring.aimType = AimType.AtMoveTarget;
+            Offspring.ignoreNodeGraph = true;
+            Offspring.driverUpdateTimerOverride = -1;
+            Offspring.resetCurrentEnemyOnNextDriverSelection = false;
+            Offspring.noRepeat = false;
+            Offspring.shouldSprint = false;
+            Offspring.shouldFireEquipment = false;
+            Offspring.shouldTapButton = false;
+
+        }
+        private void MM_RebuildSkills()
+        {
+            GameObject GrandParent = Resources.Load<GameObject>("prefabs/characterbodies/GrandParentBody");
+            MM_DestroyGenericSkillComponents(GrandParent);
+            MM_CreateSkillFamilies(GrandParent.GetComponent<SkillLocator>(), GrandParent);
+            MM_CreatePrimary(GrandParent.GetComponent<SkillLocator>());
+            MM_CreateSecondary(GrandParent.GetComponent<SkillLocator>());
+            MM_CreateUtility(GrandParent.GetComponent<SkillLocator>());
+            MM_CreateSpecial(GrandParent.GetComponent<SkillLocator>());
+
+        }
+        private void MM_DestroyGenericSkillComponents(GameObject gameObject)
+        {
+            foreach (GenericSkill skill in gameObject.GetComponentsInChildren<GenericSkill>())
+            {
+                DestroyImmediate(skill);
+            }
+        }
+        private void MM_CreateSkillFamilies(SkillLocator skillLocator, GameObject myCharacter)
+        {
+            skillLocator.SetFieldValue<GenericSkill[]>("allSkills", new GenericSkill[0]);
+            {
+                skillLocator.primary = myCharacter.AddComponent<GenericSkill>();
+                SkillFamily newFamily = ScriptableObject.CreateInstance<SkillFamily>();
+                newFamily.variants = new SkillFamily.Variant[1];
+                LoadoutAPI.AddSkillFamily(newFamily);
+                skillLocator.primary.SetFieldValue("_skillFamily", newFamily);
+            }
+            {
+                skillLocator.secondary = myCharacter.AddComponent<GenericSkill>();
+                SkillFamily newFamily = ScriptableObject.CreateInstance<SkillFamily>();
+                newFamily.variants = new SkillFamily.Variant[1];
+                LoadoutAPI.AddSkillFamily(newFamily);
+                skillLocator.secondary.SetFieldValue("_skillFamily", newFamily);
+            }
+            {
+                skillLocator.utility = myCharacter.AddComponent<GenericSkill>();
+                SkillFamily newFamily = ScriptableObject.CreateInstance<SkillFamily>();
+                newFamily.variants = new SkillFamily.Variant[1];
+                LoadoutAPI.AddSkillFamily(newFamily);
+                skillLocator.utility.SetFieldValue("_skillFamily", newFamily);
+            }
+            {
+                skillLocator.special = myCharacter.AddComponent<GenericSkill>();
+                SkillFamily newFamily = ScriptableObject.CreateInstance<SkillFamily>();
+                newFamily.variants = new SkillFamily.Variant[1];
+                LoadoutAPI.AddSkillFamily(newFamily);
+                skillLocator.special.SetFieldValue("_skillFamily", newFamily);
+            }
+        }
+        private void MM_CreatePrimary(SkillLocator skillLocator)
+        {
+            SkillDef primary = ScriptableObject.CreateInstance<SkillDef>();
+            primary.activationState = new SerializableEntityStateType(typeof(EntityStates.GrandParentBoss.GroundSwipe)); //You can also "steal" another skill by setting this to another skill, ex: "new SerializableEntityStateType(typeof(EntityStates.Commando.CombatDodge))
+            primary.activationStateMachineName = "Weapon"; //Setting this to "Body" overrides your current movement
+            primary.baseMaxStock = 1; //How many charges you hold at once
+            primary.baseRechargeInterval = 0f; //how long it takes to recharge a stock
+            primary.beginSkillCooldownOnSkillEnd = true;
+            primary.canceledFromSprinting = false; //if set to true, sprinting will immediately end the skill
+            primary.fullRestockOnAssign = true;
+            primary.interruptPriority = InterruptPriority.Skill; //The priority of the skill (If performing an important skill, lower priority skills won't activate)
+            primary.isBullets = false; //if set to true, when the cooldown ends it will reload ALL stock
+            primary.isCombatSkill = true;
+            primary.mustKeyPress = false; //If true, you MUST press the key each time for it to activate, otherwise it auto-fires
+            primary.noSprint = false; //Whether or not to stop sprinting when activating the attack
+            primary.rechargeStock = 1;
+            primary.requiredStock = 1;
+            primary.shootDelay = 0.1f;
+            primary.stockToConsume = 0;
+            primary.skillDescriptionToken = "a"; //Description for the skill, you can use <style>'s to add colors
+            primary.skillName = "a"; //The game-readable name for the skill
+            primary.skillNameToken = "cumsick god"; //The visible name of the skill
+            //primary.icon = Sprite.Create(this.HURT, new Rect(0, 0, this.HURT.width, this.HURT.height), new Vector2(.5f, .5f));
+
+            LoadoutAPI.AddSkillDef(primary);
+            SkillFamily primarySkillFamily = skillLocator.primary.skillFamily;
+
+            primarySkillFamily.variants[0] = new SkillFamily.Variant
+            {
+                skillDef = primary,
+                unlockableName = "",
+                viewableNode = new ViewablesCatalog.Node(primary.skillNameToken, false, null)
+
+            };
+        }
+        private void MM_CreateSecondary(SkillLocator skillLocator)
+        {
+            SkillDef secondarySkillDef = ScriptableObject.CreateInstance<SkillDef>();
+            secondarySkillDef.activationState = new SerializableEntityStateType(typeof(EntityStates.GrandParentBoss.SpiritPull));
+            secondarySkillDef.activationStateMachineName = "Weapon";
+            secondarySkillDef.baseMaxStock = 1;
+            secondarySkillDef.baseRechargeInterval = 5f;
+            secondarySkillDef.beginSkillCooldownOnSkillEnd = true;
+            secondarySkillDef.canceledFromSprinting = false;
+            secondarySkillDef.fullRestockOnAssign = true;
+            secondarySkillDef.interruptPriority = InterruptPriority.PrioritySkill;
+            secondarySkillDef.isBullets = false;
+            secondarySkillDef.isCombatSkill = true;
+            secondarySkillDef.mustKeyPress = false;
+            secondarySkillDef.noSprint = false;
+            secondarySkillDef.rechargeStock = 1;
+            secondarySkillDef.requiredStock = 1;
+            secondarySkillDef.shootDelay = 0.5f;
+            secondarySkillDef.stockToConsume = 1;
+            secondarySkillDef.skillDescriptionToken = "AAAAAAAAAAAAAAAAAAAAAA";
+            secondarySkillDef.skillName = "aaa";
+            secondarySkillDef.skillNameToken = "aa";
+
+            LoadoutAPI.AddSkillDef(secondarySkillDef);
+            SkillFamily secondarySkillFamily = skillLocator.secondary.skillFamily;
+
+            secondarySkillFamily.variants[0] = new SkillFamily.Variant
+            {
+                skillDef = secondarySkillDef,
+                unlockableName = "",
+                viewableNode = new ViewablesCatalog.Node(secondarySkillDef.skillNameToken, false, null)
+
+            };
+        }
+
+        private void MM_CreateUtility(SkillLocator skillLocator)
+        {
+            SkillDef utilitySkillDef = ScriptableObject.CreateInstance<SkillDef>();
+            utilitySkillDef.activationState = new SerializableEntityStateType(typeof(EntityStates.GrandParentBoss.Offspring));
+            utilitySkillDef.activationStateMachineName = "Weapon";
+            utilitySkillDef.baseMaxStock = 1;
+            utilitySkillDef.baseRechargeInterval = 3f;
+            utilitySkillDef.beginSkillCooldownOnSkillEnd = true;
+            utilitySkillDef.canceledFromSprinting = false;
+            utilitySkillDef.fullRestockOnAssign = true;
+            utilitySkillDef.interruptPriority = InterruptPriority.PrioritySkill;
+            utilitySkillDef.isBullets = false;
+            utilitySkillDef.isCombatSkill = false;
+            utilitySkillDef.mustKeyPress = false;
+            utilitySkillDef.noSprint = false;
+            utilitySkillDef.rechargeStock = 1;
+            utilitySkillDef.requiredStock = 1;
+            utilitySkillDef.shootDelay = 0.5f;
+            utilitySkillDef.stockToConsume = 1;
+            utilitySkillDef.skillDescriptionToken = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+            utilitySkillDef.skillName = "AAAAAAAAAAAAAA";
+            utilitySkillDef.skillNameToken = "AAAAAAAAAAAA";
+            //utilitySkillDef.icon = Sprite.Create(this.OVERCLOCK, new Rect(0, 0, this.OVERCLOCK.width, this.OVERCLOCK.height), new Vector2(.5f, .5f));
+
+            LoadoutAPI.AddSkillDef(utilitySkillDef);
+            SkillFamily utilitySkillFamily = skillLocator.utility.skillFamily;
+
+            utilitySkillFamily.variants[0] = new SkillFamily.Variant
+            {
+                skillDef = utilitySkillDef,
+                unlockableName = "",
+                viewableNode = new ViewablesCatalog.Node(utilitySkillDef.skillNameToken, false, null)
+
+            };
+        }
+        private void MM_CreateSpecial(SkillLocator skillLocator)
+        {
+            SkillDef specialSkillDef = ScriptableObject.CreateInstance<SkillDef>();
+            specialSkillDef.activationState = new SerializableEntityStateType(typeof(PortalJump));
+            specialSkillDef.activationStateMachineName = "Weapon";
+            specialSkillDef.baseMaxStock = 1;
+            specialSkillDef.baseRechargeInterval = 12f;
+            specialSkillDef.beginSkillCooldownOnSkillEnd = false;
+            specialSkillDef.canceledFromSprinting = false;
+            specialSkillDef.fullRestockOnAssign = false;
+            specialSkillDef.interruptPriority = InterruptPriority.Any;
+            specialSkillDef.isBullets = false;
+            specialSkillDef.isCombatSkill = true;
+            specialSkillDef.mustKeyPress = false;
+            specialSkillDef.noSprint = false;
+            specialSkillDef.rechargeStock = 1;
+            specialSkillDef.requiredStock = 1;
+            specialSkillDef.shootDelay = 1f;
+            specialSkillDef.stockToConsume = 1;
+            specialSkillDef.skillDescriptionToken = "AAAAAAAAAAAAAAAAAAAA";
+            specialSkillDef.skillName = "AAAAAAAAAAAAA";
+            specialSkillDef.skillNameToken = "AAAAAAAAAAAAAA";
+
+            LoadoutAPI.AddSkillDef(specialSkillDef);
+            SkillFamily specialSkillFamily = skillLocator.special.skillFamily;
+
+
+            specialSkillFamily.variants[0] = new SkillFamily.Variant
+            {
+                skillDef = specialSkillDef,
+                unlockableName = "",
+                viewableNode = new ViewablesCatalog.Node(specialSkillDef.skillNameToken, false, null)
+
+            };
+        }
+        #endregion
+
+        #region Hooks
+        private void Hook()
+        {
+            RoR2.TeleporterInteraction.onTeleporterBeginChargingGlobal += TeleporterInteractionOnTeleporterBeginChargingGlobal;
+            On.RoR2.EquipmentSlot.PerformEquipmentAction += EquipmentSlotOnPerformEquipmentAction;
+            //custom buffs
+            On.RoR2.CharacterBody.RecalculateStats += RecalculateStats;
+            On.RoR2.CharacterBody.RemoveBuff += RemoveBuff;
+            //items
+            On.RoR2.GenericPickupController.GrantItem += GrantItem;
+            GlobalEventManager.onCharacterDeathGlobal += GlobalEventManagerOnOnCharacterDeath;
+            On.RoR2.CharacterBody.OnInventoryChanged += CharacterBodyOnInventoryChanged;
+            On.RoR2.GlobalEventManager.OnTeamLevelUp += GlobalEventManager_OnTeamLevelUp;
+        }
+
+        private void GlobalEventManager_OnTeamLevelUp(On.RoR2.GlobalEventManager.orig_OnTeamLevelUp orig, TeamIndex teamIndex)
+        {
+            int connectedPlayers = PlayerCharacterMasterController.instances.Count;
+            for (int i = 0; i < connectedPlayers; i++)
+            {
+                CharacterMaster characterMaster = PlayerCharacterMasterController.instances[i].master;
+                int nokiaCount = characterMaster.inventory.GetItemCount(Nokia.itemIndex);
+                if (characterMaster.hasBody && nokiaCount > 0)
+                {
+                    NokiaCall(0, characterMaster.bodyPrefab.GetComponent<CharacterBody>().transform);
+                }
+            }
+            orig(teamIndex);
         }
         private bool EquipmentSlotOnPerformEquipmentAction(On.RoR2.EquipmentSlot.orig_PerformEquipmentAction orig, EquipmentSlot self, EquipmentIndex index)
         {
@@ -625,3 +1118,4 @@ namespace CloudBurst
         }
     }
 }
+#endregion

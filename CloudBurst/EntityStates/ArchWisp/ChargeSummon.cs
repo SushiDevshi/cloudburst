@@ -1,5 +1,4 @@
-﻿using CloudBurst.Weapon.EntityStates.ArchWispMonster;
-using EntityStates.GreaterWispMonster;
+﻿using EntityStates.GreaterWispMonster;
 
 namespace CloudBurst.Weapon.ArchWispMonster.Weapon
 {

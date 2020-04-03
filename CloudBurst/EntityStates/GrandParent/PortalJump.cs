@@ -5,7 +5,7 @@ using RoR2;
 using RoR2.Navigation;
 using UnityEngine;
 
-namespace CloudBurst.EntityStates.GrandParentBoss
+namespace CloudBurst.Weapon.GrandParentBoss
 {
     public class PortalJump : BaseState
     {
@@ -20,7 +20,7 @@ namespace CloudBurst.EntityStates.GrandParentBoss
         private bool canMoveDuringTeleport;
         private bool hasEmerged;
         private HurtBox foundBullseye;
-        public static float telezoneRadius;
+        public static float telezoneRadius = 1000f;
         public static float skillDistance = 2000f;
         private float stopwatch;
         private Vector3 destinationPressence = Vector3.zero;
@@ -29,8 +29,8 @@ namespace CloudBurst.EntityStates.GrandParentBoss
         private Animator animator;
         private CharacterModel characterModel;
         private HurtBoxGroup hurtboxGroup;
-        public static GameObject jumpInEffectPrefab;
-        public static GameObject jumpOutEffectPrefab;
+        public static GameObject jumpInEffectPrefab = Resources.Load<GameObject>("prefabs/effects/GrandparentPortalJumpInEffect");
+        public static GameObject jumpOutEffectPrefab = Resources.Load<GameObject>("prefabs/effects/GrandparentPortalJumpOutEffect");
         public static Vector3 teleportOffset;
         private GrandparentEnergyFXController FXController;
         public override void OnEnter()
@@ -55,8 +55,6 @@ namespace CloudBurst.EntityStates.GrandParentBoss
                 this.FXController.portalObject = base.characterBody.modelLocator.modelTransform.GetComponent<ChildLocator>().FindChild("Portal").GetComponentInChildren<EffectComponent>().gameObject;
             }
         }
-
-        // Token: 0x06003575 RID: 13685 RVA: 0x000E015C File Offset: 0x000DE35C
         public override void FixedUpdate()
         {
             base.FixedUpdate();
@@ -133,8 +131,6 @@ namespace CloudBurst.EntityStates.GrandParentBoss
                 this.outer.SetNextStateToMain();
             }
         }
-
-        // Token: 0x06003576 RID: 13686 RVA: 0x000E0440 File Offset: 0x000DE640
         private void DoTeleport()
         {
             Ray aimRay = base.GetAimRay();
@@ -179,8 +175,6 @@ namespace CloudBurst.EntityStates.GrandParentBoss
             groundNodes.GetNodePosition(nodeIndex, out this.destinationPressence);
             this.destinationPressence += base.transform.position - base.characterBody.footPosition;
         }
-
-        // Token: 0x06003577 RID: 13687 RVA: 0x000CDA76 File Offset: 0x000CBC76
         private void SetPosition(Vector3 newPosition)
         {
             if (base.characterMotor)
@@ -188,8 +182,6 @@ namespace CloudBurst.EntityStates.GrandParentBoss
                 base.characterMotor.Motor.SetPositionAndRotation(newPosition, Quaternion.identity, true);
             }
         }
-
-        // Token: 0x06003578 RID: 13688 RVA: 0x000E0628 File Offset: 0x000DE828
         private void ScaleObject(GameObject objectToScaleDown, bool scaleUp)
         {
             float valueEnd = scaleUp ? 1f : 0f;
@@ -202,8 +194,6 @@ namespace CloudBurst.EntityStates.GrandParentBoss
             component.overallCurve = AnimationCurve.EaseInOut(0f, valueStart, 1f, valueEnd);
             component.enabled = true;
         }
-
-        // Token: 0x06003579 RID: 13689 RVA: 0x0002FF1F File Offset: 0x0002E11F
         public override void OnExit()
         {
             base.OnExit();
