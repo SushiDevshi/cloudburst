@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using BepInEx;
-using R2API.Utils;
-using RoR2;
-using RoR2.Projectile;
+﻿using RoR2.Projectile;
 using UnityEngine;
 
 namespace CloudBurst

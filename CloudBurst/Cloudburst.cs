@@ -370,13 +370,15 @@ namespace CloudBurst
         #region GrandParent
         private void RebuildGrandParent()
         {
-            RebuildGrandParentSkillDrivers();
-            RebuildSkills();
+            GP_RebuildSkillDrivers();
+            GP_RebuildSkills();
         }
-        private void RebuildGrandParentSkillDrivers()
+
+        private void GP_RebuildSkillDrivers()
         {
             GameObject GrandParentMaster = Resources.Load<GameObject>("prefabs/charactermasters/GrandparentMaster");
 
+            
             AISkillDriver GroundSwipe = GrandParentMaster.AddComponent<AISkillDriver>();
             AISkillDriver SpiritPull = GrandParentMaster.AddComponent<AISkillDriver>();
             AISkillDriver Offspring = GrandParentMaster.AddComponent<AISkillDriver>();
@@ -516,55 +518,16 @@ namespace CloudBurst
             Path.shouldFireEquipment = false;
             Path.shouldTapButton = false;
         }
-        private void RebuildSkills()
+        private void GP_RebuildSkills()
         {
             GameObject GrandParent = Resources.Load<GameObject>("prefabs/characterbodies/GrandParentBody");
-            GP_DestroyGenericSkillComponents(GrandParent);
-            GP_CreateSkillFamilies(GrandParent.GetComponent<SkillLocator>(), GrandParent);
+            Toolkit.DestroyGenericSkillComponents(GrandParent);
+            Toolkit.CreateSkillFamilies(GrandParent.GetComponent<SkillLocator>(), GrandParent);
             GP_CreatePrimary(GrandParent.GetComponent<SkillLocator>());
             GP_CreateSecondary(GrandParent.GetComponent<SkillLocator>());
             GP_CreateUtility(GrandParent.GetComponent<SkillLocator>());
             GP_CreateSpecial(GrandParent.GetComponent<SkillLocator>());
 
-        }
-        private void GP_DestroyGenericSkillComponents(GameObject gameObject)
-        {
-            foreach (GenericSkill skill in gameObject.GetComponentsInChildren<GenericSkill>())
-            {
-                DestroyImmediate(skill);
-            }
-        }
-        private void GP_CreateSkillFamilies(SkillLocator skillLocator, GameObject myCharacter)
-        {
-            skillLocator.SetFieldValue<GenericSkill[]>("allSkills", new GenericSkill[0]);
-            {
-                skillLocator.primary = myCharacter.AddComponent<GenericSkill>();
-                SkillFamily newFamily = ScriptableObject.CreateInstance<SkillFamily>();
-                newFamily.variants = new SkillFamily.Variant[1];
-                LoadoutAPI.AddSkillFamily(newFamily);
-                skillLocator.primary.SetFieldValue("_skillFamily", newFamily);
-            }
-            {
-                skillLocator.secondary = myCharacter.AddComponent<GenericSkill>();
-                SkillFamily newFamily = ScriptableObject.CreateInstance<SkillFamily>();
-                newFamily.variants = new SkillFamily.Variant[1];
-                LoadoutAPI.AddSkillFamily(newFamily);
-                skillLocator.secondary.SetFieldValue("_skillFamily", newFamily);
-            }
-            {
-                skillLocator.utility = myCharacter.AddComponent<GenericSkill>();
-                SkillFamily newFamily = ScriptableObject.CreateInstance<SkillFamily>();
-                newFamily.variants = new SkillFamily.Variant[1];
-                LoadoutAPI.AddSkillFamily(newFamily);
-                skillLocator.utility.SetFieldValue("_skillFamily", newFamily);
-            }
-            {
-                skillLocator.special = myCharacter.AddComponent<GenericSkill>();
-                SkillFamily newFamily = ScriptableObject.CreateInstance<SkillFamily>();
-                newFamily.variants = new SkillFamily.Variant[1];
-                LoadoutAPI.AddSkillFamily(newFamily);
-                skillLocator.special.SetFieldValue("_skillFamily", newFamily);
-            }
         }
         private void GP_CreatePrimary(SkillLocator skillLocator)
         {
@@ -711,8 +674,8 @@ namespace CloudBurst
         #region Mega mushroom
         private void CreateMegaMushroom()
         {
-            RebuildGrandParentSkillDrivers();
-            RebuildSkills();
+            MM_RebuildSkillDrivers();
+            MM_RebuildSkills();
         }
         private void MM_RebuildSkillDrivers()
         {
@@ -803,9 +766,9 @@ namespace CloudBurst
         }
         private void MM_RebuildSkills()
         {
-            GameObject GrandParent = Resources.Load<GameObject>("prefabs/characterbodies/GrandParentBody");
+            GameObject GrandParent = Resources.Load<GameObject>("prefabs/characterbodies/MiniMushroomBody");
             MM_DestroyGenericSkillComponents(GrandParent);
-            MM_CreateSkillFamilies(GrandParent.GetComponent<SkillLocator>(), GrandParent);
+            Toolkit.CreateSkillFamilies(GrandParent.GetComponent<SkillLocator>(), GrandParent);
             MM_CreatePrimary(GrandParent.GetComponent<SkillLocator>());
             MM_CreateSecondary(GrandParent.GetComponent<SkillLocator>());
             MM_CreateUtility(GrandParent.GetComponent<SkillLocator>());
@@ -817,38 +780,6 @@ namespace CloudBurst
             foreach (GenericSkill skill in gameObject.GetComponentsInChildren<GenericSkill>())
             {
                 DestroyImmediate(skill);
-            }
-        }
-        private void MM_CreateSkillFamilies(SkillLocator skillLocator, GameObject myCharacter)
-        {
-            skillLocator.SetFieldValue<GenericSkill[]>("allSkills", new GenericSkill[0]);
-            {
-                skillLocator.primary = myCharacter.AddComponent<GenericSkill>();
-                SkillFamily newFamily = ScriptableObject.CreateInstance<SkillFamily>();
-                newFamily.variants = new SkillFamily.Variant[1];
-                LoadoutAPI.AddSkillFamily(newFamily);
-                skillLocator.primary.SetFieldValue("_skillFamily", newFamily);
-            }
-            {
-                skillLocator.secondary = myCharacter.AddComponent<GenericSkill>();
-                SkillFamily newFamily = ScriptableObject.CreateInstance<SkillFamily>();
-                newFamily.variants = new SkillFamily.Variant[1];
-                LoadoutAPI.AddSkillFamily(newFamily);
-                skillLocator.secondary.SetFieldValue("_skillFamily", newFamily);
-            }
-            {
-                skillLocator.utility = myCharacter.AddComponent<GenericSkill>();
-                SkillFamily newFamily = ScriptableObject.CreateInstance<SkillFamily>();
-                newFamily.variants = new SkillFamily.Variant[1];
-                LoadoutAPI.AddSkillFamily(newFamily);
-                skillLocator.utility.SetFieldValue("_skillFamily", newFamily);
-            }
-            {
-                skillLocator.special = myCharacter.AddComponent<GenericSkill>();
-                SkillFamily newFamily = ScriptableObject.CreateInstance<SkillFamily>();
-                newFamily.variants = new SkillFamily.Variant[1];
-                LoadoutAPI.AddSkillFamily(newFamily);
-                skillLocator.special.SetFieldValue("_skillFamily", newFamily);
             }
         }
         private void MM_CreatePrimary(SkillLocator skillLocator)
