@@ -31,26 +31,29 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Enemies\Clayman.cs" />
+    <Compile Include="EntityStates\Clayman\Leap.cs" />
+    <Compile Include="EntityStates\Clayman\Swing.cs" />
+    <Compile Include="EntityStates\GrandParent\SpiritRaise.cs" />
+    <Compile Include="EntityStates\MegaMushroom\BaseState\Unplant.cs" />
+    <Compile Include="EntityStates\MegaMushroom\BaseState\Plant.cs" />
+    <Compile Include="EntityStates\MegaMushroom\BaseState\Implant.cs" />
+    <Compile Include="Misc\MiscModify.cs" />
+    <Compile Include="Misc\Misc.cs" />
+    <Compile Include="Enemies\ArchaicWisp.cs" />
+    <Compile Include="Enemies\MegaMushrum.cs" />
+    <Compile Include="Enemies\GrandParent.cs" />
     <Compile Include="EntityStates\ArchWisp\ChargeSummon.cs" />
     <Compile Include="EntityStates\ArchWisp\Summon.cs" />
-    <Compile Include="EntityStates\Engineer\Shotgun.cs" />
-    <Compile Include="EntityStates\Engineer\MaintainAndDefend.cs" />
-    <Compile Include="EntityStates\Engineer\MovementShield.cs" />
+    <Compile Include="EntityStates\GrandParent\OffSpring.cs" />
     <Compile Include="EntityStates\GrandParent\PortalJump.cs" />
-    <Compile Include="EntityStates\MegaMushroom\Class1.cs" />
-    <Compile Include="Items\Sundial.cs" />
+    <Compile Include="EntityStates\MegaMushroom\Suicide.cs" />
+    <Compile Include="EntityStates\MegaMushroom\SporePain.cs" />
     <Compile Include="Scripts\SolarGranter.cs" />
     <Compile Include="Scripts\Helpers.cs" />
     <Compile Include="Cloudburst.cs" />
-    <Compile Include="Equipment\BrokenPrinter.cs" />
-    <Compile Include="Equipment\HereticBox.cs" />
-    <Compile Include="Equipment\UnstableQuantumReactor.cs" />
-    <Compile Include="Equipment\TheLumpkin.cs" />
-    <Compile Include="Items\Grinder.cs" />
-    <Compile Include="Items\MechanicalTrinket.cs" />
-    <Compile Include="Items\Nokia.cs" />
-    <Compile Include="Items\Pillow.cs" />
-    <Compile Include="Items\Root.cs" />
+    <Compile Include="Equipment\Equipment.cs" />
+    <Compile Include="Items\Item.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -89,9 +92,6 @@
     <Reference Include="KdTreeLib, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>E:\libs\KdTreeLib.dll</HintPath>
-    </Reference>
-    <Reference Include="MiniRpcLib">
-      <HintPath>E:\libs\MiniRpcLib.dll</HintPath>
     </Reference>
     <Reference Include="MMHOOK_Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

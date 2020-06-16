@@ -18,12 +18,11 @@ namespace CloudBurst.Weapon.MegaMushroom
         public static string muzzleString = EntityStates.MiniMushroom.SporeGrenade.muzzleString;
         public static float damageCoefficient = EntityStates.MiniMushroom.SporeGrenade.damageCoefficient * 2;
         public static float timeToTarget = 3f;
-        public static float projectileVelocity = 55f;
-        public static float minimumDistance = EntityStates.MiniMushroom.SporeGrenade.minimumDistance;
-        public static float maximumDistance = EntityStates.MiniMushroom.SporeGrenade.maximumDistance * 2;
+        public static float projectileVelocity = 25;
+        public static float minimumDistance = 10;
+        public static float maximumDistance = 30;
         public static float baseChargeTime = 2f;
         private uint chargeupSoundID;
-        private Transform modelTransform;
         private float duration;
         private float chargeTime;
         private bool hasFired;
@@ -35,6 +34,7 @@ namespace CloudBurst.Weapon.MegaMushroom
             this.duration = SporeGrenade.baseDuration / this.attackSpeedStat;
             this.chargeTime = SporeGrenade.baseChargeTime / this.attackSpeedStat;
             this.modelAnimator = base.GetModelAnimator();
+            //Debug.Log(""+ EntityStates.MiniMushroom.SporeGrenade.projectilePrefab.name.ToString() + "");
             if (this.modelAnimator)
             {
                 this.modelAnimator.SetBool("isCharged", false);
@@ -128,7 +128,7 @@ namespace CloudBurst.Weapon.MegaMushroom
                     magnitude2 = SporeGrenade.minimumDistance;
                 }
                 if (magnitude2 > SporeGrenade.maximumDistance)
-                {
+                {     
                     magnitude2 = SporeGrenade.maximumDistance;
                 }
                 float y = Trajectory.CalculateInitialYSpeed(SporeGrenade.timeToTarget, vector.y);
@@ -137,25 +137,11 @@ namespace CloudBurst.Weapon.MegaMushroom
                 magnitude = direction.magnitude;
                 ray.direction = direction;
             }
-            Quaternion rotation = Util.QuaternionSafeLookRotation(ray.direction + UnityEngine.Random.insideUnitSphere * 0.05f);
-            ProjectileManager.instance.FireProjectile(SporeGrenade.projectilePrefab, ray.origin, rotation, base.gameObject, this.damageStat * SporeGrenade.damageCoefficient, 0f, Util.CheckRoll(this.critStat, base.characterBody.master), DamageColorIndex.Default, null, magnitude);
             for (float num = 0f; num < 9f; num += 1f)
             {
                 float num2 = 6.2831855f;
                 Vector3 forward = new Vector3(Mathf.Cos(num / 9f * num2), 0f, Mathf.Sin(num / 9f * num2));
-                FireProjectileInfo fireProjectileInfo2 = new FireProjectileInfo
-                {
-                    projectilePrefab = SporeGrenade.projectilePrefab,
-                    position = ray.origin,
-                    rotation = Quaternion.LookRotation(forward),
-                    damage = this.damageStat * 1f,
-                    force = 80f,
-                    crit = Util.CheckRoll(this.critStat, 0f, null),
-                    damageColorIndex = DamageColorIndex.Default,
-                    target = null,
-                    owner = base.gameObject
-                };
-                ProjectileManager.instance.FireProjectile(fireProjectileInfo2);
+                ProjectileManager.instance.FireProjectile(SporeGrenade.projectilePrefab, ray.origin, Quaternion.LookRotation(forward), base.gameObject, this.damageStat * SporeGrenade.damageCoefficient, 0f, base.RollCrit(), DamageColorIndex.Default, null, magnitude - 10);
             }
         }
     }

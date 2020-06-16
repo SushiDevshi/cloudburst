@@ -49,7 +49,7 @@ namespace CloudBurst.Weapon.GrandParentBoss
                 };
                 EffectManager.SpawnEffect(PortalJump.jumpInEffectPrefab, effectData, true);
             }
-            this.FXController = base.characterBody.GetComponent<GrandparentEnergyFXController>();
+            this.FXController = base.gameObject.GetComponent<GrandparentEnergyFXController>();
             if (this.FXController)
             {
                 this.FXController.portalObject = base.characterBody.modelLocator.modelTransform.GetComponent<ChildLocator>().FindChild("Portal").GetComponentInChildren<EffectComponent>().gameObject;

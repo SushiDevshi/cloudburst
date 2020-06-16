@@ -4,6 +4,7 @@ using System.Text;
 using BepInEx;
 using R2API.Utils;
 using RoR2;
+using RoR2.CharacterAI;
 using RoR2.Projectile;
 using UnityEngine;
 
@@ -32,20 +33,33 @@ namespace CloudBurst
             }
             return false;
         }
-        public static double Percent(float number, int percent)
+        public static System.Boolean RegisterNewMaster(GameObject g)
         {
-            //return ((double) 80         *       25)/100;
-            return (float)number * percent / 100;
-        }
-        /*
-         *     DirectorAPI.MonsterActions += delegate (List<DirectorAPI.DirectorCardHolder> list, DirectorAPI.StageInfo stage)
+            if (g != null && g.HasComponent<CharacterMaster>())
             {
-                if (!list.Contains(archWispCard))
+                RoR2.MasterCatalog.getAdditionalEntries += list =>
                 {
-                    list.Add(archWispCard);
-                }
-            };
-         */
+                    list.Add(g);
+                };
+
+                return true;
+            }
+            return false;
+        }
+        public static void DestroyGenericSkillComponents(GameObject gameObject)
+        {
+            foreach (GenericSkill skill in gameObject.GetComponentsInChildren<GenericSkill>())
+            {
+                UnityEngine.Object.DestroyImmediate(skill);
+            }
+        }
+        public static void DestroySkillDrivers(GameObject gameObject)
+        {
+            foreach (AISkillDriver skill in gameObject.GetComponentsInChildren<AISkillDriver>())
+            {
+                UnityEngine.Object.DestroyImmediate(skill);
+            }
+        }
 
         /// <summary>
         /// Adds a GameObject to the projectile catalog and returns true

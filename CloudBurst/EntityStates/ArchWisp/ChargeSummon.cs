@@ -1,6 +1,6 @@
 ﻿using EntityStates.GreaterWispMonster;
 
-namespace CloudBurst.Weapon.ArchWispMonster.Weapon
+namespace CloudBurst.Weapon.ArchWispMonster
 {
     public class ChargeSummon : ChargeCannons
     {
