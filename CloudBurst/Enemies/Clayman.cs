@@ -13,6 +13,7 @@ namespace CloudBurst.Enemies
 {
     //TODO:
     //Make an icon.
+    //Fix stupid targeting issue ugh
     [R2APISubmoduleDependency(new string[]
     {
         "LoadoutAPI",
@@ -37,7 +38,7 @@ namespace CloudBurst.Enemies
             RebuildSkillDrivers();
             RebuildSkills();
             FixHurtBox();
-            FixInteractorandEntityLocatorandEquipment();
+            FixInteractorandEquipment();
             Main.logger.LogInfo("Built Clay Men!");
         }
 
@@ -87,18 +88,36 @@ namespace CloudBurst.Enemies
         }
         private static void FixHurtBox()
         {
-            Transform transform = clayMan.transform.GetChild(0).GetChild(0);
+            /*Transform transform = clayMan.transform.GetChild(0).GetChild(0);
             ChildLocator childLocator = clayMan.GetComponentInChildren<ChildLocator>();
             if (childLocator.FindChild("Chest"))
             {
                 transform = childLocator.FindChild("Chest");
-            }
-            CapsuleCollider hitBox = transform.gameObject.AddComponent<CapsuleCollider>();
+            }*/
+            GameObject badVariableName = clayMan.GetComponent<ModelLocator>().modelTransform.gameObject;
+            CapsuleCollider hitBox = badVariableName.gameObject.AddComponent<CapsuleCollider>();
+
             hitBox.radius *= 2;
-            transform.gameObject.layer = LayerIndex.entityPrecise.intVal;
-            HurtBox hurtBox = transform.gameObject.AddComponent<HurtBox>();
-            HurtBoxGroup hurtBoxGroup = clayMan.AddOrGetComponent<HurtBoxGroup>();
+
+            badVariableName.gameObject.layer = LayerIndex.entityPrecise.intVal;
+
+            HurtBox hurtBox = badVariableName.AddComponent<HurtBox>();
+            HurtBoxGroup hurtBoxGroup = badVariableName.AddComponent<HurtBoxGroup>();
+
+            hurtBox.damageModifier = HurtBox.DamageModifier.Normal;
             hurtBox.healthComponent = clayMan.GetComponent<HealthComponent>();
+            hurtBox.hurtBoxGroup = hurtBoxGroup;
+            hurtBox.indexInGroup = 0;
+            hurtBox.isBullseye = true;
+
+            hurtBoxGroup.bullseyeCount = 1;
+            hurtBoxGroup.hurtBoxes = new HurtBox[]
+            {
+                hurtBox
+            };
+            hurtBoxGroup.mainHurtBox = hurtBox; 
+
+            /*hurtBox.healthComponent = clayMan.GetComponent<HealthComponent>();
             hurtBox.damageModifier = HurtBox.DamageModifier.Normal;
             hurtBox.hurtBoxGroup = hurtBoxGroup;
 
@@ -110,16 +129,15 @@ namespace CloudBurst.Enemies
                 hurtBox
             };
             hurtBoxGroup.mainHurtBox = hurtBox;
-            hurtBoxGroup.bullseyeCount = 1;           
+            hurtBoxGroup.bullseyeCount = 2;   
+            */
         }
-        private static void FixInteractorandEntityLocatorandEquipment()
+        private static void FixInteractorandEquipment()
         {
             Interactor interactor = clayMan.AddOrGetComponent<Interactor>();
             clayMan.AddOrGetComponent<InteractionDriver>().highlightInteractor = true;
             interactor.maxInteractionDistance = 4;
 
-            EntityLocator entityLocator = clayMan.AddComponent<EntityLocator>();
-            entityLocator.entity = clayMan;
 
             clayMan.AddComponent<EquipmentSlot>();
 }
@@ -172,6 +190,7 @@ namespace CloudBurst.Enemies
             AISkillDriver Chase = clayManMaster.AddComponent<AISkillDriver>();
             AISkillDriver Leap = clayManMaster.AddComponent<AISkillDriver>();
             AISkillDriver anotherSkillDriver = clayManMaster.AddComponent<AISkillDriver>();
+            AISkillDriver andAnotherSkillDriver = clayManMaster.AddComponent<AISkillDriver>();
 
             Swing.skillSlot = SkillSlot.Primary;
             Swing.requireSkillReady = false;
@@ -205,8 +224,8 @@ namespace CloudBurst.Enemies
             Leap.maxUserHealthFraction = float.PositiveInfinity;
             Leap.minTargetHealthFraction = float.NegativeInfinity;
             Leap.maxTargetHealthFraction = float.PositiveInfinity;
-            Leap.minDistance = 10;
-            Leap.maxDistance = 20;
+            Leap.minDistance = 0;
+            Leap.maxDistance = 30;
             Leap.selectionRequiresTargetLoS = false;
             Leap.activationRequiresTargetLoS = false;
             Leap.activationRequiresAimConfirmation = false;
@@ -245,6 +264,7 @@ namespace CloudBurst.Enemies
             Chase.shouldFireEquipment = false;
             Chase.shouldTapButton = false;
 
+            anotherSkillDriver.customName = "FollowNodeGraphToTarget";
             anotherSkillDriver.skillSlot = SkillSlot.None;
             anotherSkillDriver.requireSkillReady = false;
             anotherSkillDriver.requireEquipmentReady = false;
@@ -268,6 +288,31 @@ namespace CloudBurst.Enemies
             anotherSkillDriver.shouldSprint = false;
             anotherSkillDriver.shouldFireEquipment = false;
             anotherSkillDriver.shouldTapButton = false;
+
+            andAnotherSkillDriver.customName = "ChaseOffNodegraph";
+            andAnotherSkillDriver.skillSlot = SkillSlot.None;
+            andAnotherSkillDriver.requireSkillReady = false;
+            andAnotherSkillDriver.requireEquipmentReady = false;
+            andAnotherSkillDriver.moveTargetType = TargetType.CurrentEnemy;
+            andAnotherSkillDriver.minUserHealthFraction = float.NegativeInfinity;
+            andAnotherSkillDriver.maxUserHealthFraction = float.PositiveInfinity;
+            andAnotherSkillDriver.minTargetHealthFraction = float.NegativeInfinity;
+            andAnotherSkillDriver.maxTargetHealthFraction = float.PositiveInfinity;
+            andAnotherSkillDriver.minDistance = 0;
+            andAnotherSkillDriver.maxDistance = 10;
+            andAnotherSkillDriver.selectionRequiresTargetLoS = true;
+            andAnotherSkillDriver.activationRequiresTargetLoS = false;
+            andAnotherSkillDriver.activationRequiresAimConfirmation = false;
+            andAnotherSkillDriver.movementType = MovementType.ChaseMoveTarget;
+            andAnotherSkillDriver.moveInputScale = 1;
+            andAnotherSkillDriver.aimType = AimType.AtMoveTarget;
+            andAnotherSkillDriver.ignoreNodeGraph = true;
+            andAnotherSkillDriver.driverUpdateTimerOverride = -1;
+            andAnotherSkillDriver.resetCurrentEnemyOnNextDriverSelection = false;
+            andAnotherSkillDriver.noRepeat = false;
+            andAnotherSkillDriver.shouldSprint = false;
+            andAnotherSkillDriver.shouldFireEquipment = false;
+            andAnotherSkillDriver.shouldTapButton = false;
         }
         private static void RebuildSkills()
         {

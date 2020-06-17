@@ -50,17 +50,21 @@ namespace CloudBurst.Weapon.ClayMan
                 crit = false,
                 damageColorIndex = DamageColorIndex.Default,
                 damageType = DamageType.AOE,
-                falloffModel = BlastAttack.FalloffModel.Linear,
-                impactEffect = Resources.Load<GameObject>("prefabs/effects/impacteffects/BeetleQueenDeathImpact").GetComponent<EffectComponent>().effectIndex,
+                falloffModel = BlastAttack.FalloffModel.None,
                 inflictor = base.gameObject,
                 losType = BlastAttack.LoSType.NearestHit,
                 position = hitGroundInfo.position,
                 procChainMask = default,
                 procCoefficient = 1.2f,
-                radius = 15,
+                radius = 25,
                 teamIndex = TeamIndex.Monster
             };
-            impactAttack.Fire();
+            EffectData effect = new EffectData()
+            {
+                origin = hitGroundInfo.position,
+                scale = 25
+            };
+            EffectManager.SpawnEffect(Resources.Load<GameObject>("prefabs/effects/impacteffects/BeetleQueenDeathImpact"), effect, true);
             this.endState = true;
         }
 

@@ -34,9 +34,9 @@ namespace CloudBurst.Items
                     ruleType = ItemDisplayRuleType.ParentedPrefab,
                     followerPrefab = prefab,
                     childName = "Chest",
-                    localScale = new Vector3(0.15f, 0.15f, 0.15f),
-                    localAngles = new Vector3(0f, 180f, 0f),
-                    localPos = new Vector3(-0.35f, -0.1f, 0f)
+                    localScale = new Vector3(0f, 0, 0f),
+                    localAngles = new Vector3(0f, 0f, 0f),
+                    localPos = new Vector3(0, 0f, 0f)
                 };
 
                 var item = new CustomItem(itemDef, new[] { rule });
@@ -72,9 +72,9 @@ public sealed class MechanicalTrinket
                 ruleType = ItemDisplayRuleType.ParentedPrefab,
                 followerPrefab = prefab,
                 childName = "Chest",
-                localScale = new Vector3(0.15f, 0.15f, 0.15f),
-                localAngles = new Vector3(0f, 180f, 0f),
-                localPos = new Vector3(-0.35f, -0.1f, 0f)
+                localScale = new Vector3(0f, 0, 0f),
+                localAngles = new Vector3(0f, 0f, 0f),
+                localPos = new Vector3(0, 0f, 0f)
             };
 
             var item = new CustomItem(itemDef, new[] { rule });
@@ -125,9 +125,9 @@ public sealed class Sundial
                 ruleType = ItemDisplayRuleType.ParentedPrefab,
                 followerPrefab = prefab,
                 childName = "Chest",
-                localScale = new Vector3(0.15f, 0.15f, 0.15f),
-                localAngles = new Vector3(0f, 180f, 0f),
-                localPos = new Vector3(-0.35f, -0.1f, 0f)
+                localScale = new Vector3(0f, 0, 0f),
+                localAngles = new Vector3(0f, 0f, 0f),
+                localPos = new Vector3(0, 0f, 0f)
             };
 
             var item = new CustomItem(itemDef, new[] { rule });
@@ -164,9 +164,9 @@ public sealed class Root
                 ruleType = ItemDisplayRuleType.ParentedPrefab,
                 followerPrefab = prefab,
                 childName = "Chest",
-                localScale = new Vector3(0.15f, 0.15f, 0.15f),
-                localAngles = new Vector3(0f, 180f, 0f),
-                localPos = new Vector3(-0.35f, -0.1f, 0f)
+                localScale = new Vector3(0f, 0, 0f),
+                localAngles = new Vector3(0f, 0f, 0f),
+                localPos = new Vector3(0, 0f, 0f)
             };
 
             var item = new CustomItem(itemDef, new[] { rule });
@@ -201,9 +201,9 @@ public sealed class Pillow
                 ruleType = ItemDisplayRuleType.ParentedPrefab,
                 followerPrefab = prefab,
                 childName = "Chest",
-                localScale = new Vector3(0.15f, 0.15f, 0.15f),
-                localAngles = new Vector3(0f, 180f, 0f),
-                localPos = new Vector3(-0.35f, -0.1f, 0f)
+                localScale = new Vector3(0f, 0, 0f),
+                localAngles = new Vector3(0f, 0f, 0f),
+                localPos = new Vector3(0, 0f, 0f)
             };
 
             var item = new CustomItem(itemDef, new[] { rule });
@@ -239,9 +239,9 @@ public sealed class Nokia
                 ruleType = ItemDisplayRuleType.ParentedPrefab,
                 followerPrefab = prefab,
                 childName = "Chest",
-                localScale = new Vector3(0.15f, 0.15f, 0.15f),
-                localAngles = new Vector3(0f, 180f, 0f),
-                localPos = new Vector3(-0.35f, -0.1f, 0f)
+                localScale = new Vector3(0f, 0, 0f),
+                localAngles = new Vector3(0f, 0f, 0f),
+                localPos = new Vector3(0, 0f, 0f)
             };
 
             var item = new CustomItem(itemDef, new[] { rule });
@@ -279,9 +279,9 @@ public sealed class SCP
                 ruleType = ItemDisplayRuleType.ParentedPrefab,
                 followerPrefab = prefab,
                 childName = "Chest",
-                localScale = new Vector3(0.15f, 0.15f, 0.15f),
-                localAngles = new Vector3(0f, 180f, 0f),
-                localPos = new Vector3(-0.35f, -0.1f, 0f)
+                localScale = new Vector3(0f, 0, 0f),
+                localAngles = new Vector3(0f, 0f, 0f),
+                localPos = new Vector3(0, 0f, 0f)
             };
 
             var item = new CustomItem(itemDef, new[] { rule });
