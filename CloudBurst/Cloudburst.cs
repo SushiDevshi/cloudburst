@@ -72,7 +72,7 @@ namespace CloudBurst
             int itemID = UnityEngine.Random.Range(0, items.Count);
             return items[itemID];
         }
-        public static List<PluginInfo> loadedPlugins;
+        private List<PluginInfo> loadedPlugins;
         public Main()
         {
             //equips
@@ -91,10 +91,10 @@ namespace CloudBurst
         private List<string> replacedFuncs;
         public static ManualLogSource logger;
 
-        private bool templarMod;
-        private bool archaicWispMod;
-        private bool deathMarkMod;
-        private bool solidIceMod;
+        public static bool templarMod;
+        public static bool archaicWispMod;
+        public static bool deathMarkMod;
+        public static bool solidIceMod;
         public void Awake()
         {
             if (logger == null)
@@ -125,7 +125,8 @@ namespace CloudBurst
 
         private void CheckCompat()
         {
-            /*this.replacedFuncs.Add("com.rob.PlayableTemplar");
+            replacedFuncs = new List<string>();
+            this.replacedFuncs.Add("com.rob.PlayableTemplar");
             this.replacedFuncs.Add("com.ThunderDownUnder.SolidIceWall");
             this.replacedFuncs.Add("com.Borbo.DeathMarkFix");
             this.replacedFuncs.Add("com.Rein.ReinDirectorCardDemoArchWisp"); //rein i BEG YOU please shorten that name PLEASE
@@ -134,27 +135,25 @@ namespace CloudBurst
                 switch ((pluginInfo.Metadata.GUID))
                 {
                     case "com.Borbo.DeathMarkFix":
-                        this.deathMarkMod = true;
+                        deathMarkMod = true;
                         break;
                     case "com.ThunderDownUnder.SolidIceWall":
-                        this.solidIceMod = true;
+                        solidIceMod = true;
                         break;
                     case "com.rob.PlayableTemplar":
-                        this.templarMod = true;
+                        templarMod = true;
                         break;
                     case "com.Rein.ReinDirectorCardDemoArchWisp":
-                        this.archaicWispMod = true;
+                        archaicWispMod = true;
                         break;
                 }
                 //oh no, i'm checking plugins for incompats, how evil i am!
                 if (this.replacedFuncs.Contains(pluginInfo.Metadata.GUID))
                 {
                     logger.LogWarning("Cloudburst may have conflicts with the following mod:" + pluginInfo.Metadata.Name + "");
-                    //logger.LogWarning("If you do not choose to disable these mod(s), Cloudburst will disable certain features to provide a bug free experenice at the cost of content.");
-                      
-                
+                    logger.LogWarning("If you do not choose to disable these mod(s), Cloudburst will disable certain features to provide a bug free experenice at the cost of content.");
                 }
-            }*/
+            }
         }
 
         #region Hooks
