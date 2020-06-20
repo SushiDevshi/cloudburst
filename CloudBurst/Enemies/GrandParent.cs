@@ -14,13 +14,6 @@ namespace CloudBurst.Enemies
     //Finish spawncard
     //Finish fixing skills
 
-    [R2APISubmoduleDependency(new string[]
-    {
-        "LoadoutAPI",
-        "AssetPlus",
-        "DirectorAPI",
-
-     })]
     internal sealed class GrandParent
     {
         private static GameObject grandParent;
@@ -466,7 +459,7 @@ namespace CloudBurst.Enemies
             SpawnerPodsController podsController = parentPod.GetComponent<SpawnerPodsController>();
             if (podsController)
             {
-                podsController.incubationDuration = 6;
+                podsController.incubationDuration = 15;
             }
          }
         private static void BuildPodBody()
@@ -484,8 +477,8 @@ namespace CloudBurst.Enemies
                 characterBody.baseMaxHealth = 300; //Base health, basically the health you have when you start a new run
                 characterBody.baseMaxShield = 0; //Base shield, basically the same as baseMaxHealth but with shields
                 characterBody.baseMoveSpeed = 0; //Base move speed, this is usual 7
-                characterBody.baseNameToken = "GRANDPA, RENT_BODY_NAME"; //The base name token. 
-                characterBody.subtitleNameToken = "GRANDPARENT_BODY_SUBTITLE"; //Set this to true if its a boss
+                characterBody.baseNameToken = "POD_BODY_NAME"; //The base name token. 
+                //characterBody.subtitleNameToken = "GRANDPARENT_BODY_SUBTITLE"; //Set this to true if its a boss
                 characterBody.baseRegen = 0; //Base health regen.
                 characterBody.bodyFlags = (CharacterBody.BodyFlags.None); ///Base body flags, should be self explanatory 
                 characterBody.crosshairPrefab = characterBody.crosshairPrefab = Resources.Load<GameObject>("Prefabs/CharacterBodies/HuntressBody").GetComponent<CharacterBody>().crosshairPrefab; //The crosshair prefab.

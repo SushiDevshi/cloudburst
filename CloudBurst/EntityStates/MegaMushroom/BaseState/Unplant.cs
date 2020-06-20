@@ -24,7 +24,20 @@ namespace CloudBurst.Weapon.MegaMushroom
             {
                 float num2 = 6.2831855f;
                 Vector3 forward = new Vector3(Mathf.Cos(num / 9f * num2), 0f, Mathf.Sin(num / 9f * num2));
-                ProjectileManager.instance.FireProjectile(Resources.Load<GameObject>("prefabs/projectiles/Sunder"), base.transform.position, Quaternion.LookRotation(forward), base.gameObject, this.damageStat * SporeGrenade.damageCoefficient, 0f, base.RollCrit(), DamageColorIndex.Default);
+                var projInfo = new FireProjectileInfo
+                {
+                    crit = base.RollCrit(),
+                    damage = this.damageStat * (SporeGrenade.damageCoefficient * 1.2f),
+                    owner = base.gameObject,
+                    position = base.transform.position,
+                    projectilePrefab = Resources.Load<GameObject>("prefabs/projectiles/Sunder"),
+                    rotation = Quaternion.LookRotation(forward),
+                    damageColorIndex = DamageColorIndex.Default,
+                    force = 2500,
+                    procChainMask = default
+                };
+                ProjectileManager.instance.FireProjectile(projInfo);
+                //ProjectileManager.instance.FireProjectile(Resources.Load<GameObject>("prefabs/projectiles/Sunder"), base.transform.position, Quaternion.LookRotation(forward), base.gameObject, this.damageStat * SporeGrenade.damageCoefficient, 0f, base.RollCrit(), DamageColorIndex.Default);
             }
             base.PlayAnimation("Plant", "PlantEnd", "PlantEnd.playbackRate", this.duration);
         }

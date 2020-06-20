@@ -11,13 +11,6 @@ namespace CloudBurst.Enemies
 {
     //TODO:
     //Make an icon.
-    [R2APISubmoduleDependency(new string[]
-    {
-        "LoadoutAPI",
-        "AssetPlus",
-        "DirectorAPI",
-        "LanguageAPI",
-     })]
     internal sealed class Archwisps          
     {
         public static GameObject archWisp;
@@ -38,7 +31,8 @@ namespace CloudBurst.Enemies
             archWispCharacterSpawnCard = Resources.Load<CharacterSpawnCard>("spawncards/characterspawncards/cscarchwisp");                                                                                             
 
             archWispDirectorCardHolder = new DirectorAPI.DirectorCardHolder();
-            archWispCharacterSpawnCard.directorCreditCost = 300;
+            archWispCharacterSpawnCard.directorCreditCost = 250;
+            archWispCharacterSpawnCard.forbiddenAsBoss = true;
 
             archWispDirectorCard = new DirectorCard
             {
@@ -83,7 +77,7 @@ namespace CloudBurst.Enemies
                 characterBody.baseMaxShield = 0; //Base shield, basically the same as baseMaxHealth but with shields
                 characterBody.baseMoveSpeed = 8; //Base move speed, this is usual 7
                 characterBody.baseNameToken = "ARCHAICWISP_BODY_NAME"; //The base name token. 
-                characterBody.subtitleNameToken = "Hidden summoner"; //Set this to true if its a boss
+                //characterBody.subtitleNameToken = "Hidden summoner"; //Set this to true if its a boss
                 characterBody.baseRegen = 0; //Base health regen.
                 characterBody.bodyFlags = (CharacterBody.BodyFlags.None); ///Base body flags, should be self explanatory 
                 characterBody.crosshairPrefab = characterBody.crosshairPrefab = Resources.Load<GameObject>("Prefabs/CharacterBodies/HuntressBody").GetComponent<CharacterBody>().crosshairPrefab; //The crosshair prefab.

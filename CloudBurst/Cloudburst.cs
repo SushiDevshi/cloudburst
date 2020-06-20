@@ -15,15 +15,14 @@ namespace CloudBurst
     [BepInDependency("com.bepis.r2api")]
     [R2APISubmoduleDependency(new string[]
     {
-        "EffectAPI",
-        "LoadoutAPI",
         "ItemAPI",
-        "ItemDropAPI",
-        "AssetPlus",
         "ResourcesAPI",
         "PrefabAPI",
         "LanguageAPI",
-        "BuffAPI"
+        "BuffAPI",
+        "LoadoutAPI",
+        "DirectorAPI",
+        "LanguageAPI",
     })]
     [BepInPlugin("com.AwokeinanEngima.CloudBurst", "CloudBurst", "1.0.0")]  
 
@@ -173,10 +172,19 @@ namespace CloudBurst
             GlobalEventManager.onCharacterDeathGlobal += GlobalEventManagerOnOnCharacterDeath;
             On.RoR2.GlobalEventManager.OnTeamLevelUp += GlobalEventManager_OnTeamLevelUp;
             //qol
-            
+            On.RoR2.ItemCatalog.RegisterItem += ItemCatalog_RegisterItem;
             On.RoR2.BuffCatalog.RegisterBuff += BuffCatalog_RegisterBuff;
             On.EntityStates.Commando.DodgeState.OnEnter += DodgeState_OnEnter;
             On.RoR2.PickupPickerController.OnInteractionBegin += PickupPickerController_OnInteractionBegin;
+        }
+
+        private void ItemCatalog_RegisterItem(On.RoR2.ItemCatalog.orig_RegisterItem orig, ItemIndex itemIndex, ItemDef itemDef)
+        {
+            if (itemIndex == ItemIndex.Incubator)
+            {
+                itemDef.tier = ItemTier.Tier2;
+            }
+            orig(itemIndex, itemDef);
         }
         #region GlobalEventManager
         private void GlobalEventManagerOnOnCharacterDeath(DamageReport damageReport)
@@ -185,12 +193,17 @@ namespace CloudBurst
                 return;
             if (damageReport.victim.body.isChampion && damageReport.attackerBody && damageReport.attackerBody.isPlayerControlled && damageReport != null)
             {
+                CharacterBody attackerBody = damageReport.attackerBody;
+                CharacterBody victimBody = damageReport.victimBody;
                 CharacterMaster attackerMaster = damageReport.attackerMaster;
-                Inventory inventory = attackerMaster ? attackerMaster.inventory : null;
-                int GrinderCount = inventory.GetItemCount(Item.itemIndex);
+                CharacterMaster victimMaster = damageReport.victimMaster;
+                Inventory attackerInventory = attackerMaster ? attackerMaster.inventory : null;
+                Inventory victimInventory = victimMaster ? victimMaster.inventory : null;
+                int GrinderCount = attackerInventory.GetItemCount(Item.itemIndex);
                 if (GrinderCount > 0 && Util.CheckRoll(15 + (GrinderCount * 5)) && attackerMaster)
                 {
-                    inventory.GiveItem(GetRandomItem(bossitemList), 1);
+                    Util.PlaySound("ui_obj_casinoChest_open", attackerBody.gameObject);
+                    attackerInventory.GiveItem(GetRandomItem(bossitemList), 1);
                 }
             }
         }
@@ -212,15 +225,17 @@ namespace CloudBurst
                 int sundialCount = victimInventory.GetItemCount(Sundial.itemIndex);
                 if (rootCount > 0 && Util.CheckRoll((17 + (rootCount * 3    )), attackerMaster) && attackerMaster && damageReport.victimMaster)
                 {
-                    damageReport.victimBody.AddTimedBuff(BuffIndex.Cripple, 3);
+                    Util.PlaySound("Play_nullifier_attack1_root", victimBody.gameObject);
+                    victimBody.AddTimedBuff(BuffIndex.Cripple, 3);
                 }
                 if (sundialCount > 0 && Util.CheckRoll((45), victimMaster) && damageReport.victimBody && victimMaster)
                 {
-                    damageReport.victimBody.AddTimedBuff(Sundial.solarBuff, (sundialCount * 3));
+                    Util.PlaySound("Play_item_use_gainArmor", victimBody.gameObject);
+                    victimBody.AddTimedBuff(Sundial.solarBuff, (sundialCount * 3));
                 }
                 if (scpCount > 0 && damageReport.victimBody && victimMaster)
                 {
-                    damageReport.victimBody.AddTimedBuff(scpBuffList[scpRandom], (scpCount * 2));
+                    victimBody.AddTimedBuff(scpBuffList[scpRandom], (scpCount * 2));
                 }                                                 
             }
         }
@@ -245,7 +260,7 @@ namespace CloudBurst
 
         private void PickupPickerController_OnInteractionBegin(On.RoR2.PickupPickerController.orig_OnInteractionBegin orig, PickupPickerController self, Interactor activator)
         {
-            activator.GetComponent<CharacterBody>().AddTimedBuff(BuffIndex.ArmorBoost, 2);
+            activator.GetComponent<CharacterBody>().AddTimedBuff(BuffIndex.ArmorBoost, 1);
             orig(self, activator);
         }
 
@@ -294,7 +309,6 @@ namespace CloudBurst
                     }
                 }
             }
-
             orig(teamIndex);
         }
         private bool EquipmentSlotOnPerformEquipmentAction(On.RoR2.EquipmentSlot.orig_PerformEquipmentAction orig, EquipmentSlot self, EquipmentIndex index)

@@ -11,15 +11,7 @@ using static RoR2.CharacterAI.AISkillDriver;
 namespace CloudBurst.Enemies
 {
     //TODO:
-    //Make an icon.
     //Fix stupid targeting issue ugh
-    [R2APISubmoduleDependency(new string[]
-    {
-        "LoadoutAPI",
-        "AssetPlus",
-        "DirectorAPI",
-        "LanguageAPI",
-     })]
     internal sealed class ClayMan
     {
         public static GameObject clayMan;

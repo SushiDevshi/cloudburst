@@ -93,7 +93,7 @@ public sealed class Sundial
         {
             LanguageAPI.Add("SUNDIAL_ITEM_TOKEN", "Sundial");
             LanguageAPI.Add("SUNDIAL_ITEM_DESCRIPTION_TOKEN", "Chance to gain light armor after being hit. +3 seconds per stack.");
-            LanguageAPI.Add("SUNDIAL_ITEM_PICKUP_TOKEN", "Feel the burn, and gain from it.");
+            LanguageAPI.Add("SUNDIAL_ITEM_PICKUP_TOKEN", "No pain, no gain.");
             var itemDef = new ItemDef
             {
                 pickupModelPath = "Prefabs/PickupModels/PickupMystery",

@@ -13,13 +13,7 @@ namespace CloudBurst.Enemies
 {
     //TODO:
     //Make an icon.
-    [R2APISubmoduleDependency(new string[]
-    {
-        "LoadoutAPI",
-        "AssetPlus",
-        "DirectorAPI",
-        "LanguageAPI",
-     })]
+
     internal sealed class MegaMushrum
     {
         public static GameObject megaMushrum;
@@ -63,7 +57,7 @@ namespace CloudBurst.Enemies
             DirectorAPI.DirectorCardHolder directorCardHolder = new DirectorAPI.DirectorCardHolder();
             DirectorCard directorCard = new DirectorCard();
 
-            characterSpawnCard.directorCreditCost = 350;
+            characterSpawnCard.directorCreditCost = 325;
             characterSpawnCard.forbiddenAsBoss = false;
             characterSpawnCard.name = "cscMegaMushrum";
             //characterSpawnCard.forbiddenFlags = RoR2.Navigation.NodeFlags.None;
@@ -116,7 +110,7 @@ namespace CloudBurst.Enemies
                 characterBody.baseJumpPower = 14; //Base jump power
                 characterBody.baseMaxHealth = 720; //Base health, basically the health you have when you start a new run
                 characterBody.baseMaxShield = 0; //Base shield, basically the same as baseMaxHealth but with shields
-                characterBody.baseMoveSpeed = 8; //Base move speed, this is usual 7
+                characterBody.baseMoveSpeed = 6; //Base move speed, this is usual 7
                 characterBody.baseNameToken = "MEGAMUSHRUM_BODY_TOKEN"; //The base name token. 
                 characterBody.subtitleNameToken = ""; //Set this to true if its a boss
                 characterBody.baseRegen = 12; //Base health regen.
