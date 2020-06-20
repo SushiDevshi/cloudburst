@@ -18,7 +18,7 @@ namespace CloudBurst.Enemies
         "DirectorAPI",
         "LanguageAPI",
      })]
-    internal sealed class Archwisps
+    internal sealed class Archwisps          
     {
         public static GameObject archWisp;
         private static CharacterSpawnCard archWispCharacterSpawnCard;

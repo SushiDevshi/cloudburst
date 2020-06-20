@@ -17,8 +17,8 @@ namespace CloudBurst.Items
                 LanguageAPI.Add("PORTABLEGRINDER_ITEM_PICKUP_TOKEN", "Chance for bosses to drop boss items when killed");
                 var itemDef = new ItemDef
                 {
-                    pickupModelPath = "Prefabs/PickupModels/PickupSoda",
-                    pickupIconPath = "Textures/ItemIcons/texbirdeyeicon",
+                    pickupModelPath = "Prefabs/PickupModels/PickupMystery",
+                    pickupIconPath = "Textures/MiscIcons/texMysteryIcon",
                     pickupToken = "PORTABLEGRINDER_ITEM_DESCRIPTION_TOKEN",
                     nameToken = "PORTABLEGRINDER_ITEM_TOKEN",
                     descriptionToken = "PORTABLEGRINDER_ITEM_DESCRIPTION_TOKEN",
@@ -27,7 +27,7 @@ namespace CloudBurst.Items
                     tier = ItemTier.Tier3
                 };
 
-                var prefab = Resources.Load<GameObject>("Prefabs/PickupModels/PickupSoda");
+                var prefab = Resources.Load<GameObject>("Prefabs/PickupModels/PickupMystery");
 
                 var rule = new ItemDisplayRule
                 {
@@ -56,8 +56,8 @@ public sealed class MechanicalTrinket
             LanguageAPI.Add("TRINKET_ITEM_PICKUP_TOKEN", "Increase teleporter radius.");
             var itemDef = new ItemDef
             {
-                pickupModelPath = "Prefabs/PickupModels/PickupSoda",
-                pickupIconPath = "Textures/ItemIcons/texbirdeyeicon",
+                pickupModelPath = "Prefabs/PickupModels/PickupMystery",
+                pickupIconPath = "Textures/MiscIcons/texMysteryIcon",
                 pickupToken = "TRINKET_ITEM_PICKUP_TOKEN",
                 nameToken = "TRINKET_ITEM_TOKEN",
                 descriptionToken = "TRINKET_ITEM_DESCRIPTION_TOKEN",
@@ -65,7 +65,7 @@ public sealed class MechanicalTrinket
                 tier = ItemTier.Tier2
             };
 
-            var prefab = Resources.Load<GameObject>("Prefabs/PickupModels/PickupSoda");
+            var prefab = Resources.Load<GameObject>("Prefabs/PickupModels/PickupMystery");
 
             var rule = new ItemDisplayRule
             {
@@ -96,8 +96,8 @@ public sealed class Sundial
             LanguageAPI.Add("SUNDIAL_ITEM_PICKUP_TOKEN", "Feel the burn, and gain from it.");
             var itemDef = new ItemDef
             {
-                pickupModelPath = "Prefabs/PickupModels/PickupSoda",
-                pickupIconPath = "Textures/ItemIcons/texbirdeyeicon",
+                pickupModelPath = "Prefabs/PickupModels/PickupMystery",
+                pickupIconPath = "Textures/MiscIcons/texMysteryIcon",
                 pickupToken = "SUNDIAL_ITEM_PICKUP_TOKEN",
                 nameToken = "SUNDIAL_ITEM_TOKEN",
                 name = "WeirdSundial",
@@ -118,7 +118,7 @@ public sealed class Sundial
             solarBuff = BuffAPI.Add(new CustomBuff(solarBuffDef));
             //solarBuff = ItemAPI.Add(new CustomBuff(solarbuff.name, solarbuff));
 
-            var prefab = Resources.Load<GameObject>("Prefabs/PickupModels/PickupSoda");
+            var prefab = Resources.Load<GameObject>("Prefabs/PickupModels/PickupMystery");
 
             var rule = new ItemDisplayRule
             {
@@ -148,8 +148,8 @@ public sealed class Root
             LanguageAPI.Add("ROOT_ITEM_PICKUP_TOKEN", "Chance to cripple enemies.");
             var itemDef = new ItemDef
             {
-                pickupModelPath = "Prefabs/PickupModels/PickupSoda",
-                pickupIconPath = "Textures/ItemIcons/texbirdeyeicon",
+                pickupModelPath = "Prefabs/PickupModels/PickupMystery",
+                pickupIconPath = "Textures/MiscIcons/texMysteryIcon",
                 pickupToken = "ROOT_ITEM_PICKUP_TOKEN",
                 nameToken = "ROOT_ITEM_TOKEN",
                 descriptionToken = "ROOT_ITEM_DESCRIPTION_TOKEN",
@@ -157,7 +157,7 @@ public sealed class Root
                 tier = ItemTier.Tier1
             };
 
-            var prefab = Resources.Load<GameObject>("Prefabs/PickupModels/PickupSoda");
+            var prefab = Resources.Load<GameObject>("Prefabs/PickupModels/PickupMystery");
 
             var rule = new ItemDisplayRule
             {
@@ -185,8 +185,8 @@ public sealed class Pillow
             LanguageAPI.Add("PILLOW_ITEM_PICKUP_TOKEN", "Gain speed when picking up an item.");
             var itemDef = new ItemDef
             {
-                pickupModelPath = "Prefabs/PickupModels/PickupSoda",
-                pickupIconPath = "Textures/ItemIcons/texbirdeyeicon",
+                pickupModelPath = "Prefabs/PickupModels/PickupMystery",
+                pickupIconPath = "Textures/MiscIcons/texMysteryIcon",
                 pickupToken = "PILLOW_ITEM_PICKUP_TOKEN",
                 nameToken = "PILLOW_ITEM_TOKEN",
                 descriptionToken = "PILLOW_ITEM_DESCRIPTION_TOKEN",
@@ -194,7 +194,7 @@ public sealed class Pillow
                 tier = ItemTier.Tier1
             };
 
-            var prefab = Resources.Load<GameObject>("Prefabs/PickupModels/PickupSoda");
+            var prefab = Resources.Load<GameObject>("Prefabs/PickupModels/PickupMystery");
 
             var rule = new ItemDisplayRule
             {
@@ -219,12 +219,12 @@ public sealed class Nokia
     {
         {
             LanguageAPI.Add("NOKIA_ITEM_TOKEN", "Interstellar Nokia");
-            LanguageAPI.Add("NOKIA_ITEM_DESCRIPTION_TOKEN", "Gain an item on level up. +5% chance to gain a green item per stack");
-            LanguageAPI.Add("NOKIA_ITEM_PICKUP_TOKEN", "Gain an item on level up");
+            LanguageAPI.Add("NOKIA_ITEM_DESCRIPTION_TOKEN", "Chance to gain an item on level up. +5% chance to gain a green item per stack");
+            LanguageAPI.Add("NOKIA_ITEM_PICKUP_TOKEN", "Chance to gain an item on level up");
             var itemDef = new ItemDef
             {
-                pickupModelPath = "Prefabs/PickupModels/PickupSoda",
-                pickupIconPath = "Textures/ItemIcons/texbirdeyeicon",
+                pickupModelPath = "Prefabs/PickupModels/PickupMystery",
+                pickupIconPath = "Textures/MiscIcons/texMysteryIcon",
                 pickupToken = "NOKIA_ITEM_PICKUP_TOKEN",
                 nameToken = "NOKIA_ITEM_TOKEN",
                 descriptionToken = "NOKIA_ITEM_DESCRIPTION_TOKEN",
@@ -232,7 +232,7 @@ public sealed class Nokia
                 tier = ItemTier.Tier3
             };
 
-            var prefab = Resources.Load<GameObject>("Prefabs/PickupModels/PickupSoda");
+            var prefab = Resources.Load<GameObject>("Prefabs/PickupModels/PickupMystery");
 
             var rule = new ItemDisplayRule
             {
@@ -262,8 +262,8 @@ public sealed class SCP
             LanguageAPI.Add("SCP_ITEM_PICKUP_TOKEN", "[REDACTED]");
             var itemDef = new ItemDef
             {
-                pickupModelPath = "Prefabs/PickupModels/PickupSoda",
-                pickupIconPath = "Textures/ItemIcons/texbirdeyeicon",
+                pickupModelPath = "Prefabs/PickupModels/PickupMystery",
+                pickupIconPath = "Textures/MiscIcons/texMysteryIcon",
                 pickupToken = "SCP_ITEM_PICKUP_TOKEN",
                 nameToken = "SCP_ITEM_TOKEN",
                 descriptionToken = "SCP_ITEM_DESCRIPTION_TOKEN",
@@ -272,7 +272,7 @@ public sealed class SCP
                 tier = ItemTier.Tier3
             };
 
-            var prefab = Resources.Load<GameObject>("Prefabs/PickupModels/PickupSoda");
+            var prefab = Resources.Load<GameObject>("Prefabs/PickupModels/PickupMystery");
 
             var rule = new ItemDisplayRule
             {

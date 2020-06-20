@@ -12,7 +12,7 @@ namespace CloudBurst.Weapon.ClayMan
         public static float damageCoefficient = 4f;
         public static float forceMagnitude = 16f;
         public static float selfForceMagnitude = 10f;                               
-        public static float radius = 3f;
+        public static float radius = 8f;
 
         public static GameObject hitEffectPrefab = EntityStates.ClaymanMonster.SwipeForward.hitEffectPrefab;
         public static GameObject swingEffectPrefab = EntityStates.ClaymanMonster.SwipeForward.swingEffectPrefab;
@@ -33,7 +33,7 @@ namespace CloudBurst.Weapon.ClayMan
             this.attack = new OverlapAttack();
             this.attack.attacker = base.gameObject;
             this.attack.inflictor = base.gameObject;
-            this.attack.teamIndex = TeamComponent.GetObjectTeam(this.attack.attacker);
+            this.attack.teamIndex = TeamIndex.Monster;
             this.attack.damage = SwipeForward.damageCoefficient * this.damageStat;
             this.attack.hitEffectPrefab = SwipeForward.hitEffectPrefab;
             this.attack.isCrit = Util.CheckRoll(this.critStat, base.characterBody.master);

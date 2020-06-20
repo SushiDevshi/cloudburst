@@ -14,13 +14,13 @@ namespace CloudBurst.Equipment
         {
             {
                 LanguageAPI.Add("HERETICSBOX_ITEM_TOKEN", "Heretic's box");
-                LanguageAPI.Add("HERETICSBOX_ITEM_DESCRIPTION_TOKEN", " Summon 4 powerful foes, kill them for a chance to gain power.");
+                LanguageAPI.Add("HERETICSBOX_ITEM_DESCRIPTION_TOKEN", "its dead");
                 LanguageAPI.Add("HERETICSBOX_ITEM_PICKUP_TOKEN", "The heretic's box...?");
                 var equipDef = new EquipmentDef
                 {
                     cooldown = 145,
-                    pickupModelPath = "Prefabs/PickupModels/PickupSoda",
-                    pickupIconPath = "Textures/ItemIcons/texSodaIcon",
+                    pickupModelPath = "Prefabs/PickupModels/PickupMystery",
+                    pickupIconPath = "Textures/MiscIcons/texMysteryIcon",
                     pickupToken = "HERETICSBOX_ITEM_PICKUP_TOKEN",
                     nameToken = "HERETICSBOX_ITEM_TOKEN",
                     descriptionToken = "HERETICSBOX_ITEM_DESCRIPTION_TOKEN",
@@ -30,16 +30,16 @@ namespace CloudBurst.Equipment
                     name = "HereticBox",
                 };
 
-                var prefab = Resources.Load<GameObject>("Prefabs/PickupModels/PickupSoda");
+                var prefab = Resources.Load<GameObject>("Prefabs/PickupModels/PickupMystery");
 
                 var rule = new ItemDisplayRule
                 {
                     ruleType = ItemDisplayRuleType.ParentedPrefab,
                     followerPrefab = prefab,
                     childName = "Chest",
-                    localScale = new Vector3(0.15f, 0.15f, 0.15f),
-                    localAngles = new Vector3(0f, 180f, 0f),
-                    localPos = new Vector3(-0.35f, -0.1f, 0f)
+                    localScale = new Vector3(0f, 0, 0f),
+                    localAngles = new Vector3(0f, 0f, 0f),
+                    localPos = new Vector3(0, 0f, 0f)
                 };
 
                 var equip = new CustomEquipment(equipDef, new[] { rule });
@@ -62,8 +62,8 @@ namespace CloudBurst.Equipment
                 var equipDef = new EquipmentDef
                 {
                     cooldown = 45,
-                    pickupModelPath = "Prefabs/PickupModels/PickupSoda",
-                    pickupIconPath = "Textures/ItemIcons/texSodaIcon",
+                    pickupModelPath = "Prefabs/PickupModels/PickupMystery",
+                    pickupIconPath = "Textures/MiscIcons/texMysteryIcon",
                     pickupToken = "LUMPKIN_ITEM_PICKUP_TOKEN",
                     nameToken = "LUMPKIN_ITEM_TOKEN",
                     descriptionToken = "LUMPKIN_ITEM_DESCRIPTION_TOKEN",
@@ -74,16 +74,16 @@ namespace CloudBurst.Equipment
                     loreToken = "LUMPKIN_ITEM_LORE_TOKEN",
                 };
 
-                var prefab = Resources.Load<GameObject>("Prefabs/PickupModels/PickupSoda");
+                var prefab = Resources.Load<GameObject>("Prefabs/PickupModels/PickupMystery");
 
                 var rule = new ItemDisplayRule
                 {
                     ruleType = ItemDisplayRuleType.ParentedPrefab,
                     followerPrefab = prefab,
                     childName = "Chest",
-                    localScale = new Vector3(0.15f, 0.15f, 0.15f),
-                    localAngles = new Vector3(0f, 180f, 0f),
-                    localPos = new Vector3(-0.35f, -0.1f, 0f)
+                    localScale = new Vector3(0f, 0, 0f),
+                    localAngles = new Vector3(0f, 0f, 0f),
+                    localPos = new Vector3(0, 0f, 0f)
                 };
 
                 var equip = new CustomEquipment(equipDef, new[] { rule });
@@ -92,18 +92,33 @@ namespace CloudBurst.Equipment
         }
         public void Scream(CharacterBody Screamer)
         {
-            BlastAttack blastAttack = new BlastAttack();
-            blastAttack.baseDamage = Screamer.maxHealth * 2;
-            blastAttack.baseForce = 150f;
-            blastAttack.radius = 150;
-            blastAttack.attacker = Screamer.gameObject;
-            blastAttack.inflictor = Screamer.gameObject;
-            blastAttack.teamIndex = TeamComponent.GetObjectTeam(blastAttack.attacker);
-            blastAttack.procCoefficient = 0f;
-            blastAttack.damageColorIndex = DamageColorIndex.Item;
-            blastAttack.falloffModel = BlastAttack.FalloffModel.None;
-            blastAttack.damageType = DamageType.Stun1s;
-            blastAttack.Fire();
+            BlastAttack impactAttack = new BlastAttack
+            {
+                attacker = Screamer.gameObject,
+                attackerFiltering = AttackerFiltering.Default,
+                baseDamage = Screamer.maxHealth,
+                baseForce = 30,
+                bonusForce = new Vector3(0, 0, 0),
+                crit = false,
+                damageColorIndex = DamageColorIndex.CritHeal,
+                damageType = DamageType.AOE,
+                falloffModel = BlastAttack.FalloffModel.None,
+                inflictor = Screamer.gameObject,
+                losType = BlastAttack.LoSType.NearestHit,
+                position = Screamer.transform.position,
+                procChainMask = default,
+                procCoefficient = 1.2f,
+                radius = 20,
+                teamIndex = Screamer.teamComponent.teamIndex
+            };
+            impactAttack.Fire();
+            EffectData effect = new EffectData()
+            {
+                origin = Screamer.transform.position,
+                scale = 20
+            };
+            EffectManager.SpawnEffect(Resources.Load<GameObject>("prefabs/effects/impacteffects/BeetleQueenDeathImpact"), effect, true);
+
         }
     }
 
@@ -144,8 +159,8 @@ namespace CloudBurst.Equipment
                 var equipDef = new EquipmentDef
                 {
                     cooldown = 110,
-                    pickupModelPath = "Prefabs/PickupModels/PickupSoda",
-                    pickupIconPath = "Textures/ItemIcons/texbirdeyeicon",
+                    pickupModelPath = "Prefabs/PickupModels/PickupMystery",
+                    pickupIconPath = "Textures/MiscIcons/texMysteryIcon",
                     pickupToken = "UNSTABLEQUANTUMREACTOR_ITEM_PICKUP_TOKEN",
                     nameToken = "UNSTABLEQUANTUMREACTOR_ITEM_TOKEN",
                     descriptionToken = "UNSTABLEQUANTUMREACTOR_ITEM_DESCRIPTION_TOKEN",
@@ -157,16 +172,17 @@ namespace CloudBurst.Equipment
 
                 };
 
-                var prefab = Resources.Load<GameObject>("Prefabs/PickupModels/PickupSoda");
+                var prefab = Resources.Load<GameObject>("Prefabs/PickupModels/PickupMystery");
                 //unstable reactor go BRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
                 var rule = new ItemDisplayRule
                 {
+                    
                     ruleType = ItemDisplayRuleType.ParentedPrefab,
                     followerPrefab = prefab,
                     childName = "Chest",
-                    localScale = new Vector3(0.15f, 0.15f, 0.15f),
-                    localAngles = new Vector3(0f, 180f, 0f),
-                    localPos = new Vector3(-0.35f, -0.1f, 0f)
+                    localScale = new Vector3(0f, 0, 0f),
+                    localAngles = new Vector3(0f, 0f, 0f),
+                    localPos = new Vector3(0, 0f, 0f)
                 };
 
                 var equip = new CustomEquipment(equipDef, new[] { rule });
@@ -206,8 +222,8 @@ namespace CloudBurst.Equipment
                 var equipDef = new EquipmentDef
                 {
                     cooldown = 110,
-                    pickupModelPath = "Prefabs/PickupModels/PickupSoda",
-                    pickupIconPath = "Textures/ItemIcons/texbirdeyeicon",
+                    pickupModelPath = "Prefabs/PickupModels/PickupMystery",
+                    pickupIconPath = "Textures/MiscIcons/texMysteryIcon",
                     pickupToken = "SUMMONERBOX_ITEM_PICKUP_TOKEN",
                     nameToken = "SUMMONERBOX_ITEM_TOKEN",
                     descriptionToken = "SUMMONERBOX_ITEM_DESCRIPTION_TOKEN",
@@ -225,28 +241,30 @@ namespace CloudBurst.Equipment
                     ruleType = ItemDisplayRuleType.ParentedPrefab,
                     followerPrefab = prefab,
                     childName = "Chest",
-                    localScale = new Vector3(0.15f, 0.15f, 0.15f),
-                    localAngles = new Vector3(0f, 180f, 0f),
-                    localPos = new Vector3(-0.35f, -0.1f, 0f)
+                    localScale = new Vector3(0f, 0, 0f),
+                    localAngles = new Vector3(0f, 0f, 0f),
+                    localPos = new Vector3(0, 0f, 0f)
                 };
 
                 var equip = new CustomEquipment(equipDef, new[] { rule });
                 EquipIndex = ItemAPI.Add(equip);
             };
         }
-        public void SummonMjnion(CharacterBody user)
+        public void SummonMjnion(CharacterBody user)                                              
         {
             CharacterMaster characterMaster;
             characterMaster = new MasterSummon
             {
                 masterPrefab = MasterCatalog.GetMasterPrefab(MasterCatalog.FindAiMasterIndexForBody(user.bodyIndex)),
-                position = user.footPosition + user.transform.up,
+                position = user.footPosition + user.transform.up + user.transform.up + user.transform.up,
                 rotation = user.transform.rotation,
                 summonerBodyObject = null,
-                ignoreTeamMemberLimit = true,
-                teamIndexOverride = user.teamComponent.teamIndex
+                ignoreTeamMemberLimit = false,                                                                                                                                                                                 
+                teamIndexOverride = user.teamComponent.teamIndex                                                                                                                  
+            }.Perform();                                                          
+            
+            
 
-            }.Perform();
             characterMaster.bodyPrefab = user.master.bodyPrefab;
             characterMaster.Respawn(characterMaster.GetBody().footPosition, Quaternion.identity);
 
@@ -254,7 +272,7 @@ namespace CloudBurst.Equipment
             characterMaster.inventory.ResetItem(ItemIndex.AutoCastEquipment);
             characterMaster.inventory.ResetItem(ItemIndex.BeetleGland);
             characterMaster.inventory.GiveItem(ItemIndex.BoostDamage, 5);
-            characterMaster.inventory.GiveItem(ItemIndex.CutHp, 1);
+            characterMaster.inventory.GiveItem(ItemIndex.CutHp, 2);
             characterMaster.inventory.CopyEquipmentFrom(user.inventory);
         }
     }

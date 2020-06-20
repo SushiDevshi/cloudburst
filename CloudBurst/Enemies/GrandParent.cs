@@ -43,7 +43,7 @@ namespace CloudBurst.Enemies
             RebuildSkills();
             FixGrandParentSwipeEffect();
             ModifyParentPod();
-            Main.logger.LogInfo("Built Grandparents!");
+            //Main.logger.LogInfo("Built Grandparents!");
 
         }
         private static void FixGrandParentSwipeEffect()

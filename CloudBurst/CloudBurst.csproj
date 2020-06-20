@@ -49,7 +49,6 @@
     <Compile Include="EntityStates\GrandParent\PortalJump.cs" />
     <Compile Include="EntityStates\MegaMushroom\Suicide.cs" />
     <Compile Include="EntityStates\MegaMushroom\SporePain.cs" />
-    <Compile Include="Scripts\SolarGranter.cs" />
     <Compile Include="Scripts\Helpers.cs" />
     <Compile Include="Cloudburst.cs" />
     <Compile Include="Equipment\Equipment.cs" />

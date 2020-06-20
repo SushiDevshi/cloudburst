@@ -56,13 +56,14 @@ namespace CloudBurst.Weapon.ClayMan
                 position = hitGroundInfo.position,
                 procChainMask = default,
                 procCoefficient = 1.2f,
-                radius = 25,
+                radius = 15,
                 teamIndex = TeamIndex.Monster
             };
+            impactAttack.Fire();
             EffectData effect = new EffectData()
             {
                 origin = hitGroundInfo.position,
-                scale = 25
+                scale = 15
             };
             EffectManager.SpawnEffect(Resources.Load<GameObject>("prefabs/effects/impacteffects/BeetleQueenDeathImpact"), effect, true);
             this.endState = true;

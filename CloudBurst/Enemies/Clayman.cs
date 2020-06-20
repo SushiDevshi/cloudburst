@@ -3,7 +3,6 @@ using R2API;
 using R2API.Utils;
 using RoR2;
 using RoR2.CharacterAI;
-using RoR2.Projectile;
 using RoR2.Skills;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,11 +20,11 @@ namespace CloudBurst.Enemies
         "DirectorAPI",
         "LanguageAPI",
      })]
-    internal sealed class ClayMan                
+    internal sealed class ClayMan
     {
         public static GameObject clayMan;
         public static GameObject clayManMaster;
-       
+
         public static SkillLocator skillLocator;
         public static void BuildClayMen()
         {
@@ -42,7 +41,7 @@ namespace CloudBurst.Enemies
             Main.logger.LogInfo("Built Clay Men!");
         }
 
-        private static void BuildDirectorCard()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+        private static void BuildDirectorCard()
         {
             On.RoR2.CharacterSpawnCard.Awake += CharacterSpawnCard_Awake;
             CharacterSpawnCard characterSpawnCard = ScriptableObject.CreateInstance<CharacterSpawnCard>();
@@ -64,7 +63,7 @@ namespace CloudBurst.Enemies
 
             directorCard.allowAmbushSpawn = true;
             directorCard.forbiddenUnlockable = "";
-            directorCard.minimumStageCompletions = 4;
+            directorCard.minimumStageCompletions = 1 ;
             directorCard.preventOverhead = false;
             directorCard.requiredUnlockable = "";
             directorCard.selectionWeight = 1;
@@ -88,12 +87,6 @@ namespace CloudBurst.Enemies
         }
         private static void FixHurtBox()
         {
-            /*Transform transform = clayMan.transform.GetChild(0).GetChild(0);
-            ChildLocator childLocator = clayMan.GetComponentInChildren<ChildLocator>();
-            if (childLocator.FindChild("Chest"))
-            {
-                transform = childLocator.FindChild("Chest");
-            }*/
             GameObject badVariableName = clayMan.GetComponent<ModelLocator>().modelTransform.gameObject;
             CapsuleCollider hitBox = badVariableName.gameObject.AddComponent<CapsuleCollider>();
 
@@ -102,6 +95,7 @@ namespace CloudBurst.Enemies
             badVariableName.gameObject.layer = LayerIndex.entityPrecise.intVal;
 
             HurtBox hurtBox = badVariableName.AddComponent<HurtBox>();
+            hurtBox.transform.localPosition = badVariableName.transform.up ;
             HurtBoxGroup hurtBoxGroup = badVariableName.AddComponent<HurtBoxGroup>();
 
             hurtBox.damageModifier = HurtBox.DamageModifier.Normal;
@@ -115,22 +109,7 @@ namespace CloudBurst.Enemies
             {
                 hurtBox
             };
-            hurtBoxGroup.mainHurtBox = hurtBox; 
-
-            /*hurtBox.healthComponent = clayMan.GetComponent<HealthComponent>();
-            hurtBox.damageModifier = HurtBox.DamageModifier.Normal;
-            hurtBox.hurtBoxGroup = hurtBoxGroup;
-
-            //i know this is bad and all but this is the last thing i can think of
-            hurtBox.isBullseye = true;
-            hurtBox.indexInGroup = 0;
-            hurtBoxGroup.hurtBoxes = new HurtBox[]
-            {
-                hurtBox
-            };
             hurtBoxGroup.mainHurtBox = hurtBox;
-            hurtBoxGroup.bullseyeCount = 2;   
-            */
         }
         private static void FixInteractorandEquipment()
         {
@@ -138,9 +117,10 @@ namespace CloudBurst.Enemies
             clayMan.AddOrGetComponent<InteractionDriver>().highlightInteractor = true;
             interactor.maxInteractionDistance = 4;
 
+            //clayMan.AddOrGetComponent<TeamComponent>().teamIndex = TeamIndex.Monster;
 
             clayMan.AddComponent<EquipmentSlot>();
-}
+        }
         private static void CharacterSpawnCard_Awake(On.RoR2.CharacterSpawnCard.orig_Awake orig, CharacterSpawnCard self)
         {
             self.loadout = new SerializableLoadout();
@@ -153,23 +133,23 @@ namespace CloudBurst.Enemies
             {
                 LanguageAPI.Add("CLAYMAN_BODY_TOKEN", "Clay Man");
                 characterBody.baseAcceleration = 80f;
-                characterBody.baseArmor = 20; //Base armor this character has, set to 20 if this character is melee 
+                characterBody.baseArmor = 10; //Base armor this character has, set to 20 if this character is melee 
                 characterBody.baseAttackSpeed = 1; //Base attack speed, usually 1
                 characterBody.baseCrit = 1;  //Base crit, usually one
-                characterBody.baseDamage = 15; //Base damage
+                characterBody.baseDamage = 13; //Base damage
                 characterBody.baseJumpCount = 1; //Base jump amount, set to 2 for a double jump. 
                 characterBody.baseJumpPower = 14; //Base jump power
-                characterBody.baseMaxHealth = 220; //Base health, basically the health you have when you start a new run
+                characterBody.baseMaxHealth = 110; //Base health, basically the health you have when you start a new run
                 characterBody.baseMaxShield = 0; //Base shield, basically the same as baseMaxHealth but with shields
                 characterBody.baseMoveSpeed = 8; //Base move speed, this is usual 7
                 characterBody.baseNameToken = "CLAYMAN_BODY_TOKEN"; //The base name token. 
                 characterBody.subtitleNameToken = ""; //Set this to true if its a boss
-                characterBody.baseRegen = 4; //Base health regen.
-                characterBody.bodyFlags = (CharacterBody.BodyFlags.IgnoreFallDamage); ///Base body flags, should be self explanatory 
+                characterBody.baseRegen = 1.4f; //Base health regen.
+                characterBody.bodyFlags = (CharacterBody.BodyFlags.ImmuneToGoo); ///Base body flags, should be self explanatory 
                 //characterBody.crosshairPrefab = characterBody.crosshairPrefab = Resources.Load<GameObject>("Prefabs/CharacterBodies/HuntressBody").GetComponent<CharacterBody>().crosshairPrefab; //The crosshair prefab.
                 characterBody.hideCrosshair = false; //Whether or not to hide the crosshair
                 characterBody.hullClassification = HullClassification.Human; //The hull classification, usually used for AI
-                characterBody.isChampion = true; //Set this to true if its A. a boss or B. a miniboss
+                characterBody.isChampion = false; //Set this to true if its A. a boss or B. a miniboss
                 characterBody.levelArmor = 0; //Armor gained when leveling up. 
                 characterBody.levelAttackSpeed = 0; //Attackspeed gained when leveling up. 
                 characterBody.levelCrit = 0; //Crit chance gained when leveling up. 
@@ -177,9 +157,9 @@ namespace CloudBurst.Enemies
                 characterBody.levelArmor = 0; //Armor gaix; //Health gained when leveling up. 
                 characterBody.levelMaxShield = 0; //Shield gained when leveling up. 
                 characterBody.levelMoveSpeed = 0; //Move speed gained when leveling up. 
-                characterBody.levelRegen = 1.2f; //Regen gained when leveling up. 
-                 //characterBody.portraitIcon = portrait; //The portrait icon, shows up in multiplayer and the death UI
-                //characterBody.preferredPodPrefab = Resources.Load<GameObject>("prefabs/networkedobjects/robocratepod"); //The pod prefab this survivor spawns in. Options: Resources.Load<GameObject>("prefabs/networkedobjects/robocratepod"); Resources.Load<GameObject>("prefabs/networkedobjects/survivorpod"); 
+                characterBody.levelRegen = 0.6f; //Regen gained when leveling up. 
+                                                 //characterBody.portraitIcon = portrait; //The portrait icon, shows up in multiplayer and the death UI
+                                                 //characterBody.preferredPodPrefab = Resources.Load<GameObject>("prefabs/networkedobjects/robocratepod"); //The pod prefab this survivor spawns in. Options: Resources.Load<GameObject>("prefabs/networkedobjects/robocratepod"); Resources.Load<GameObject>("prefabs/networkedobjects/survivorpod"); 
             }
         }
         private static void RebuildSkillDrivers()

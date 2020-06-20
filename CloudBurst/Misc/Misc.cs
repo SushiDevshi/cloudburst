@@ -9,7 +9,10 @@ namespace CloudBurst.Misc
     {
         public static void Modify()
         {
-            MakeIceWallSolid();
+            if (!Main.solidIceMod)
+            {
+                MakeIceWallSolid();
+            }
             MakeDeskPlantBetter();
             ModifyPlasmaBolt();
             RenameDaisy();
