@@ -33,6 +33,7 @@ namespace CloudBurst
         private readonly Nokia nokia;
         private readonly Root root;
         private readonly MechanicalTrinket trinket;
+        private readonly BrokenKeycard key;
         private readonly Pillow pillow;
         private readonly Sundial sundial;
         private readonly SCP scp;
@@ -47,13 +48,22 @@ namespace CloudBurst
             ItemIndex.BeetleGland,
             ItemIndex.TitanGoldDuringTP,
             ItemIndex.SprintWisp,
+            ItemIndex.Incubator
             //Excluding pearls because those aren't boss items, they come from the Cleansing Pool 
         };
 
         public static List<BuffIndex> scpBuffList = new List<BuffIndex>{
-            BuffIndex.NullifyStack, 
+            BuffIndex.NullifyStack,
             BuffIndex.ClayGoo,
-            BuffIndex.BeetleJuice
+            BuffIndex.BeetleJuice,
+            BuffIndex.HealingDisabled
+        };
+        public static List<BuffIndex> eliteBuffList = new List<BuffIndex>{
+            BuffIndex.AffixPoison,
+            BuffIndex.AffixRed,
+            BuffIndex.AffixHaunted,
+            BuffIndex.AffixBlue,
+            BuffIndex.AffixWhite
         };
         public void NokiaCall(Transform transform, int itemCount)
         {
@@ -77,6 +87,7 @@ namespace CloudBurst
             lum = new Lumpkin();
             //items
             grinder = new Item();
+            key = new BrokenKeycard();
             nokia = new Nokia();
             root = new Root();
             trinket = new MechanicalTrinket();
@@ -114,7 +125,7 @@ namespace CloudBurst
             {
                 Enemies.Archwisps.BuildArchWisps();
             }                                       
-           Enemies.GrandParent.BuildGrandParents();
+            Enemies.GrandParent.BuildGrandParents();
             Enemies.MegaMushrum.BuildMegaMushrums();
             Enemies.ClayMan.BuildClayMen();
 
@@ -169,23 +180,51 @@ namespace CloudBurst
             //items
             On.RoR2.GenericPickupController.GrantItem += GrantItem;
             GlobalEventManager.onServerDamageDealt += GlobalEventManager_onServerDamageDealt;
+            GlobalEventManager.OnInteractionsGlobal += GlobalEventManager_OnInteractionsGlobal;
             GlobalEventManager.onCharacterDeathGlobal += GlobalEventManagerOnOnCharacterDeath;
             On.RoR2.GlobalEventManager.OnTeamLevelUp += GlobalEventManager_OnTeamLevelUp;
             //qol
-            On.RoR2.ItemCatalog.RegisterItem += ItemCatalog_RegisterItem;
+            //On.RoR2.ItemCatalog.RegisterItem += ItemCatalog_RegisterItem;
             On.RoR2.BuffCatalog.RegisterBuff += BuffCatalog_RegisterBuff;
             On.EntityStates.Commando.DodgeState.OnEnter += DodgeState_OnEnter;
             On.RoR2.PickupPickerController.OnInteractionBegin += PickupPickerController_OnInteractionBegin;
         }
 
-        private void ItemCatalog_RegisterItem(On.RoR2.ItemCatalog.orig_RegisterItem orig, ItemIndex itemIndex, ItemDef itemDef)
+        private void GlobalEventManager_OnInteractionsGlobal(Interactor interactor, IInteractable interactable, GameObject gameObject)
+        {
+            CharacterBody characterBody = interactor.GetComponent<CharacterBody>();
+            if (characterBody)
+            {
+                Inventory inventory = characterBody.inventory;
+                CharacterMaster master = characterBody.master;
+                if (inventory && master)
+                {
+                    int keyCardCount = inventory.GetItemCount(BrokenKeycard.itemIndex);
+                    int sundialCount = inventory.GetItemCount(Sundial.itemIndex);
+                    if (keyCardCount > 0)
+                    {
+                        master.GiveMoney(3U + (uint)(keyCardCount * 3));
+                    }
+                    if (sundialCount > 0 && Util.CheckRoll(15 + (sundialCount * 5), master))
+                    {
+                        Util.PlaySound("Play_item_use_gainArmor", characterBody .gameObject);
+                        int h = UnityEngine.Random.Range(0, eliteBuffList.Count);
+                        characterBody.AddTimedBuff(eliteBuffList[h], 5);
+                    }
+                }
+            }
+        }
+
+
+
+        /*private void ItemCatalog_RegisterItem(On.RoR2.ItemCatalog.orig_RegisterItem orig, ItemIndex itemIndex, ItemDef itemDef)
         {
             if (itemIndex == ItemIndex.Incubator)
             {
                 itemDef.tier = ItemTier.Tier2;
             }
             orig(itemIndex, itemDef);
-        }
+        }*/
         #region GlobalEventManager
         private void GlobalEventManagerOnOnCharacterDeath(DamageReport damageReport)
         {
@@ -222,16 +261,10 @@ namespace CloudBurst
                 int scpRandom = UnityEngine.Random.Range(0, scpBuffList.Count);
                 int rootCount = attackerInventory.GetItemCount(Root.itemIndex);
                 int scpCount = attackerInventory.GetItemCount(SCP.itemIndex);
-                int sundialCount = victimInventory.GetItemCount(Sundial.itemIndex);
                 if (rootCount > 0 && Util.CheckRoll((17 + (rootCount * 3    )), attackerMaster) && attackerMaster && damageReport.victimMaster)
                 {
                     Util.PlaySound("Play_nullifier_attack1_root", victimBody.gameObject);
                     victimBody.AddTimedBuff(BuffIndex.Cripple, 3);
-                }
-                if (sundialCount > 0 && Util.CheckRoll((45), victimMaster) && damageReport.victimBody && victimMaster)
-                {
-                    Util.PlaySound("Play_item_use_gainArmor", victimBody.gameObject);
-                    victimBody.AddTimedBuff(Sundial.solarBuff, (sundialCount * 3));
                 }
                 if (scpCount > 0 && damageReport.victimBody && victimMaster)
                 {
@@ -239,6 +272,7 @@ namespace CloudBurst
                 }                                                 
             }
         }
+
         #endregion
         private void CharacterBody_RecalculateStats(On.RoR2.CharacterBody.orig_RecalculateStats orig, CharacterBody self)
         {
@@ -336,7 +370,7 @@ namespace CloudBurst
             orig(self, body, inventory);
             if (self && inventory && inventory.GetItemCount(Pillow.itemIndex) > 0)
             {
-                body.AddTimedBuff(BuffIndex.CloakSpeed, 5 * inventory.GetItemCount(Pillow.itemIndex));
+                body.AddTimedBuff(BuffIndex.Cloak, 2 * inventory.GetItemCount(Pillow.itemIndex));
             }
         }
         private void TeleporterInteractionOnTeleporterBeginChargingGlobal(TeleporterInteraction obj)

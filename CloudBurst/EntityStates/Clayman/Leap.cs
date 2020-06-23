@@ -21,7 +21,7 @@ namespace CloudBurst.Weapon.ClayMan
             base.OnEnter();
             endState = false;
             this.animator = base.GetModelAnimator();
-            Util.PlaySound(Leap.leapSoundString, base.gameObject);
+            Util.PlaySound("Play_clayboss_m2_rise", base.gameObject);
             Vector3 direction = base.GetAimRay().direction;
             if (base.isAuthority)
             {
@@ -32,9 +32,8 @@ namespace CloudBurst.Weapon.ClayMan
                 Vector3 b2 = new Vector3(direction.x, 0f, direction.z).normalized * BaseLeap.forwardVelocity;
                 base.characterMotor.Motor.ForceUnground();
                 base.characterMotor.velocity = a + b + b2;
-                base.characterMotor.onHitGround += CharacterMotor_onHitGround;
             }
-
+            base.characterMotor.onHitGround += CharacterMotor_onHitGround;
             base.PlayCrossfade("Body", "LeapAirLoop", 0.15f);
         }
 
@@ -44,7 +43,7 @@ namespace CloudBurst.Weapon.ClayMan
             {
                 attacker = base.gameObject,
                 attackerFiltering = AttackerFiltering.Default,
-                baseDamage = 5 * base.damageStat,
+                baseDamage = 3 * base.damageStat,
                 baseForce = 10,
                 bonusForce = new Vector3(0, 0, 0),
                 crit = false,

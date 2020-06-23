@@ -7,10 +7,8 @@ namespace CloudBurst.Misc
 {
     internal sealed class MiscModifications
     {
-        static string hehe;
         public static void Modify()
         {
-            hehe = "hi";
             FixLunarTp();
         }
         private static void FixLunarTp()
@@ -66,7 +64,7 @@ namespace CloudBurst.Misc
                     combatDirector.maximumNumberToSpawnBeforeSkipping = 6;
                     combatDirector.eliteBias = 2;
                 }
-                else if (combatDirector.customName == "Boss")
+                else if (combatDirector.customName == "Boss")                                                                                                           
                 {
                 }
             }

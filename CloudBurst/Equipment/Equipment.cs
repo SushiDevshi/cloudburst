@@ -158,7 +158,7 @@ namespace CloudBurst.Equipment
                 LanguageAPI.Add("UNSTABLEQUANTUMREACTOR_ITEM_PICKUP_TOKEN", "Fire a random projectile on use.");
                 var equipDef = new EquipmentDef
                 {
-                    cooldown = 110,
+                    cooldown = 20,
                     pickupModelPath = "Prefabs/PickupModels/PickupMystery",
                     pickupIconPath = "Textures/MiscIcons/texMysteryIcon",
                     pickupToken = "UNSTABLEQUANTUMREACTOR_ITEM_PICKUP_TOKEN",
@@ -168,8 +168,7 @@ namespace CloudBurst.Equipment
                     enigmaCompatible = true,
                     isLunar = false,
                     loreToken = "",
-                    name = "UnstableReactor"
-
+                    name = "UnstableReactor",
                 };
 
                 var prefab = Resources.Load<GameObject>("Prefabs/PickupModels/PickupMystery");

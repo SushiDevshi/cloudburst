@@ -33,7 +33,7 @@ namespace CloudBurst.Weapon.MegaMushroom
                     projectilePrefab = Resources.Load<GameObject>("prefabs/projectiles/Sunder"),
                     rotation = Quaternion.LookRotation(forward),
                     damageColorIndex = DamageColorIndex.Default,
-                    force = 2500,
+                    force = 2500, 
                     procChainMask = default
                 };
                 ProjectileManager.instance.FireProjectile(projInfo);

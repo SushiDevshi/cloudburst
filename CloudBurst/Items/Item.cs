@@ -15,6 +15,13 @@ namespace CloudBurst.Items
                 LanguageAPI.Add("PORTABLEGRINDER_ITEM_TOKEN", "Portable Grinder");
                 LanguageAPI.Add("PORTABLEGRINDER_ITEM_DESCRIPTION_TOKEN", "15% chance for bosses to drop a random boss item when killed");
                 LanguageAPI.Add("PORTABLEGRINDER_ITEM_PICKUP_TOKEN", "Chance for bosses to drop boss items when killed");
+
+                ItemTag[] tags = new ItemTag[2]
+                {
+                ItemTag.OnKillEffect,
+                ItemTag.AIBlacklist
+                };
+
                 var itemDef = new ItemDef
                 {
                     pickupModelPath = "Prefabs/PickupModels/PickupMystery",
@@ -54,6 +61,13 @@ public sealed class MechanicalTrinket
             LanguageAPI.Add("TRINKET_ITEM_TOKEN", "Mechanical Trinket");
             LanguageAPI.Add("TRINKET_ITEM_DESCRIPTION_TOKEN", "Increase teleporter radius.");
             LanguageAPI.Add("TRINKET_ITEM_PICKUP_TOKEN", "Increase teleporter radius.");
+
+            ItemTag[] tags = new ItemTag[2]
+            {
+                ItemTag.AIBlacklist,
+                ItemTag.Utility
+            };
+
             var itemDef = new ItemDef
             {
                 pickupModelPath = "Prefabs/PickupModels/PickupMystery",
@@ -62,7 +76,8 @@ public sealed class MechanicalTrinket
                 nameToken = "TRINKET_ITEM_TOKEN",
                 descriptionToken = "TRINKET_ITEM_DESCRIPTION_TOKEN",
                 name = "MechanicalTrinket",
-                tier = ItemTier.Tier2
+                tier = ItemTier.Tier2,
+                tags = tags
             };
 
             var prefab = Resources.Load<GameObject>("Prefabs/PickupModels/PickupMystery");
@@ -91,9 +106,16 @@ public sealed class Sundial
     public Sundial()
     {
         {
-            LanguageAPI.Add("SUNDIAL_ITEM_TOKEN", "Sundial");
-            LanguageAPI.Add("SUNDIAL_ITEM_DESCRIPTION_TOKEN", "Chance to gain light armor after being hit. +3 seconds per stack.");
-            LanguageAPI.Add("SUNDIAL_ITEM_PICKUP_TOKEN", "No pain, no gain.");
+            LanguageAPI.Add("SUNDIAL_ITEM_TOKEN", "Rechargable Quantum Core");
+            LanguageAPI.Add("SUNDIAL_ITEM_DESCRIPTION_TOKEN", "Chance to become elite upon interaction. +5% chance per stack.");
+            LanguageAPI.Add("SUNDIAL_ITEM_PICKUP_TOKEN", "Chance to become elite upon interaction.");
+
+            ItemTag[] tags = new ItemTag[2]
+            {
+                ItemTag.Utility,
+                ItemTag.AIBlacklist
+            };
+
             var itemDef = new ItemDef
             {
                 pickupModelPath = "Prefabs/PickupModels/PickupMystery",
@@ -103,6 +125,7 @@ public sealed class Sundial
                 name = "WeirdSundial",
                 descriptionToken = "SUNDIAL_ITEM_DESCRIPTION_TOKEN",
                 tier = ItemTier.Tier2,
+                tags = tags
             };
 
             BuffDef solarBuffDef = new BuffDef
@@ -146,6 +169,12 @@ public sealed class Root
             LanguageAPI.Add("ROOT_ITEM_TOKEN", "Crippling Root");
             LanguageAPI.Add("ROOT_ITEM_DESCRIPTION_TOKEN", "Chance to cripple enemies for 3 seconds. +3 seconds per stack.");
             LanguageAPI.Add("ROOT_ITEM_PICKUP_TOKEN", "Chance to cripple enemies.");
+
+            ItemTag[] tags = new ItemTag[1]
+            {
+                ItemTag.Damage,
+            };
+
             var itemDef = new ItemDef
             {
                 pickupModelPath = "Prefabs/PickupModels/PickupMystery",
@@ -154,7 +183,8 @@ public sealed class Root
                 nameToken = "ROOT_ITEM_TOKEN",
                 descriptionToken = "ROOT_ITEM_DESCRIPTION_TOKEN",
                 name = "Root",
-                tier = ItemTier.Tier1
+                tier = ItemTier.Tier1,
+                tags = tags
             };
 
             var prefab = Resources.Load<GameObject>("Prefabs/PickupModels/PickupMystery");
@@ -180,9 +210,16 @@ public sealed class Pillow
     public Pillow()
     {
         {
-            LanguageAPI.Add("PILLOW_ITEM_TOKEN", "Fluffy Pillow");
-            LanguageAPI.Add("PILLOW_ITEM_DESCRIPTION_TOKEN", "Gain speed when picking up an item. Five extra seconds per stack.");
-            LanguageAPI.Add("PILLOW_ITEM_PICKUP_TOKEN", "Gain speed when picking up an item.");
+            LanguageAPI.Add("PILLOW_ITEM_TOKEN", "Odd Armpiece");
+            LanguageAPI.Add("PILLOW_ITEM_DESCRIPTION_TOKEN", "Become cloaked when picking up an item. +2 seconds per stack.");
+            LanguageAPI.Add("PILLOW_ITEM_PICKUP_TOKEN", "Become cloaked when picking up an item.");
+
+            ItemTag[] tags = new ItemTag[2]
+            {
+                ItemTag.AIBlacklist,
+                ItemTag.Utility
+            };
+
             var itemDef = new ItemDef
             {
                 pickupModelPath = "Prefabs/PickupModels/PickupMystery",
@@ -191,7 +228,8 @@ public sealed class Pillow
                 nameToken = "PILLOW_ITEM_TOKEN",
                 descriptionToken = "PILLOW_ITEM_DESCRIPTION_TOKEN",
                 name = "Pillow",
-                tier = ItemTier.Tier1
+                tier = ItemTier.Tier1,
+                tags = tags
             };
 
             var prefab = Resources.Load<GameObject>("Prefabs/PickupModels/PickupMystery");
@@ -221,6 +259,13 @@ public sealed class Nokia
             LanguageAPI.Add("NOKIA_ITEM_TOKEN", "Interstellar Nokia");
             LanguageAPI.Add("NOKIA_ITEM_DESCRIPTION_TOKEN", "Chance to gain an item on level up. +5% chance to gain a green item per stack");
             LanguageAPI.Add("NOKIA_ITEM_PICKUP_TOKEN", "Chance to gain an item on level up");
+
+            ItemTag[] tags = new ItemTag[2]
+            {
+                ItemTag.AIBlacklist,
+                ItemTag.Utility
+            };
+
             var itemDef = new ItemDef
             {
                 pickupModelPath = "Prefabs/PickupModels/PickupMystery",
@@ -229,9 +274,9 @@ public sealed class Nokia
                 nameToken = "NOKIA_ITEM_TOKEN",
                 descriptionToken = "NOKIA_ITEM_DESCRIPTION_TOKEN",
                 name = "Nokia",
-                tier = ItemTier.Tier3
+                tier = ItemTier.Tier3,
+                tags = tags
             };
-
             var prefab = Resources.Load<GameObject>("Prefabs/PickupModels/PickupMystery");
 
             var rule = new ItemDisplayRule
@@ -289,8 +334,54 @@ public sealed class SCP
         };
     }
 }
+public sealed class BrokenKeycard
+{
 
-public sealed class BrokenScepter
+    public static ItemIndex itemIndex { get; private set; }
+    public static ProcType procType { get; private set; }
+    public BrokenKeycard()
+    {
+        {
+            LanguageAPI.Add("BROKENKEY_ITEM_TOKEN", "Broken Keycard");
+            LanguageAPI.Add("BROKENKEY_ITEM_DESCRIPTION_TOKEN", "Chance to gain money upon opening a chest. 3 dollars chance per stack.");
+            LanguageAPI.Add("BROKENKEY_ITEM_PICKUP_TOKEN", "Chance to gain money upon interaction");
+
+            ItemTag[] tags = new ItemTag[2]
+            {
+                ItemTag.Utility,
+                ItemTag.AIBlacklist
+            };
+
+            var itemDef = new ItemDef
+            {
+                pickupModelPath = "Prefabs/PickupModels/PickupMystery",
+                pickupIconPath = "Textures/MiscIcons/texMysteryIcon",
+                pickupToken = "BROKENKEY_ITEM_PICKUP_TOKEN",
+                nameToken = "BROKENKEY_ITEM_TOKEN",
+                descriptionToken = "BROKENKEY_ITEM_DESCRIPTION_TOKEN",
+                name = "Keycard",
+                tier = ItemTier.Tier2,
+                tags = tags
+            };
+
+            var prefab = Resources.Load<GameObject>("Prefabs/PickupModels/PickupMystery");
+
+            var rule = new ItemDisplayRule
+            {
+                ruleType = ItemDisplayRuleType.ParentedPrefab,
+                followerPrefab = prefab,
+                childName = "Chest",
+                localScale = new Vector3(0f, 0, 0f),
+                localAngles = new Vector3(0f, 0f, 0f),
+                localPos = new Vector3(0, 0f, 0f)
+            };
+
+            var item = new CustomItem(itemDef, new[] { rule });
+            itemIndex = ItemAPI.Add(item);
+        };
+    }
+}
+    public sealed class BrokenScepter
 {
 
     public static ItemIndex itemIndex { get; private set; }
