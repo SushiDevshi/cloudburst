@@ -61,7 +61,6 @@ namespace CloudBurst
         public static List<BuffIndex> eliteBuffList = new List<BuffIndex>{
             BuffIndex.AffixPoison,
             BuffIndex.AffixRed,
-            BuffIndex.AffixHaunted,
             BuffIndex.AffixBlue,
             BuffIndex.AffixWhite
         };
@@ -189,6 +188,8 @@ namespace CloudBurst
             On.EntityStates.Commando.DodgeState.OnEnter += DodgeState_OnEnter;
             On.RoR2.PickupPickerController.OnInteractionBegin += PickupPickerController_OnInteractionBegin;
         }
+
+ 
 
         private void GlobalEventManager_OnInteractionsGlobal(Interactor interactor, IInteractable interactable, GameObject gameObject)
         {

@@ -228,7 +228,7 @@ public sealed class Pillow
                 nameToken = "PILLOW_ITEM_TOKEN",
                 descriptionToken = "PILLOW_ITEM_DESCRIPTION_TOKEN",
                 name = "Pillow",
-                tier = ItemTier.Tier1,
+                tier = ItemTier.Tier2,
                 tags = tags
             };
 
@@ -381,7 +381,54 @@ public sealed class BrokenKeycard
         };
     }
 }
-    public sealed class BrokenScepter
+public sealed class UnstableForcePressurePipe
+{
+
+    public static ItemIndex itemIndex { get; private set; }
+    public static ProcType procType { get; private set; }
+    public UnstableForcePressurePipe()
+    {
+        {
+            LanguageAPI.Add("FORCEPRESSURER_ITEM_TOKEN", "Pressure Pipe");
+            LanguageAPI.Add("FORCEPRESSURER_ITEM_DESCRIPTION_TOKEN", "Apply additional force to enemies who are midair. +7% to proc per stack.");
+            LanguageAPI.Add("FORCEPRESSURER_ITEM_PICKUP_TOKEN", "Apply additional force to enemies who are midair.");
+
+            ItemTag[] tags = new ItemTag[2]
+            {
+                ItemTag.Utility,
+                ItemTag.AIBlacklist
+            };
+
+            var itemDef = new ItemDef
+            {
+                pickupModelPath = "Prefabs/PickupModels/PickupMystery",
+                pickupIconPath = "Textures/MiscIcons/texMysteryIcon",
+                pickupToken = "FORCEPRESSURER_ITEM_PICKUP_TOKEN",
+                nameToken = "FORCEPRESSURER_ITEM_TOKEN",
+                descriptionToken = "FORCEPRESSURER_ITEM_DESCRIPTION_TOKEN",
+                name = "ForcePressure",
+                tier = ItemTier.Tier1,
+                tags = tags
+            };
+
+            var prefab = Resources.Load<GameObject>("Prefabs/PickupModels/PickupMystery");
+
+            var rule = new ItemDisplayRule
+            {
+                ruleType = ItemDisplayRuleType.ParentedPrefab,
+                followerPrefab = prefab,
+                childName = "Chest",
+                localScale = new Vector3(0f, 0, 0f),
+                localAngles = new Vector3(0f, 0f, 0f),
+                localPos = new Vector3(0, 0f, 0f)
+            };
+
+            var item = new CustomItem(itemDef, new[] { rule });
+            itemIndex = ItemAPI.Add(item);
+        };
+    }
+}
+public sealed class BrokenScepter
 {
 
     public static ItemIndex itemIndex { get; private set; }
